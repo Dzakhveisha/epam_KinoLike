@@ -1,7 +1,4 @@
 import exception.ConnectionPoolException;
-import exception.CouldNotDestroyConnectionPoolException;
-import exception.CouldNotInitializeConnectionPoolException;
-import exception.CouldNotTakeConnectionException;
 import model.User;
 import pool.ConcurConnectionPool;
 
@@ -24,7 +21,11 @@ public class Main {
             while (resultSet.next()) {
                 final User user = new User(resultSet.getLong("id"),
                         resultSet.getString("login"),
-                        resultSet.getInt("age"));
+                        resultSet.getInt("age"),
+                        resultSet.getInt("roleId"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password"),
+                        resultSet.getInt("statusId"));
                 System.out.printf("user: %s\n", user);
             }
             stmt.close();
