@@ -6,7 +6,7 @@ public class Movie implements DbEntity {
     private final int year;
     private final String description;
     private final String country;
-    private final float rating;
+    private final Float rating;
     private final FilmGenre genre;
 
     public Movie(long id,String name, int year, String description, String country, float rating, int genreInt) {

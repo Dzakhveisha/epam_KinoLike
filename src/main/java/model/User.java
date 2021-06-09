@@ -11,6 +11,30 @@ public class User implements DbEntity {
     private final String email;
     private final String passwordHash;
 
+    public String getName() {
+        return name;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public UserStatus getStatus() {
+        return status;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
     public User(long id, String name, int age, int roleInt, String email, String password, int statusint) {
         this.id = id;
         this.name = name;

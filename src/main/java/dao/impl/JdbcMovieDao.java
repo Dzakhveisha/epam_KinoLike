@@ -54,6 +54,19 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
                 resultSet.getInt(MOVIE_GENRE_ID));
     }
 
+    @Override
+    protected String getValuesForSaving(Movie entity) {
+        return String.format("('%s', %d, '%s', '%s', %d, %d)", entity.getName(), entity.getYear(),
+                entity.getDescription(), entity.getCountry(),
+                0, entity.getGenre().getId());
+    }
+
+    @Override
+    protected String getFieldsNames() {
+        return String.format("%s, %s, %s, %s, %s, %s",
+                MOVIE_NAME, MOVIE_YEAR, MOVIE_DESCRIPTION, MOVIE_COUNTRY, MOVIE_RATING, MOVIE_GENRE_ID);
+    }
+
     private static SqlThrowingConsumer<PreparedStatement> whereName(String name) {
         return statement -> statement.setString(1, name);
     }

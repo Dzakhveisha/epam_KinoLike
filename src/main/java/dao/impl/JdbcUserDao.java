@@ -39,6 +39,21 @@ public class JdbcUserDao extends BaseDao<User> implements UserDao {
                     resultSet.getInt(USER_STATUS_ID));
     }
 
+
+    @Override
+    protected String getFieldsNames() {
+        return String.format("%s, %s, %s, %s, %s, %s",
+                USER_LOGIN, USER_PASSWORD, USER_ROLE_ID, USER_STATUS_ID, USER_EMAIL, USER_AGE);
+    }
+
+    @Override
+    protected String getValuesForSaving(User entity) {
+        return  String.format("('%s', '%s', %d, %d, '%s', %d)",
+                entity.getName(), entity.getPasswordHash(),
+                entity.getRole().getId(), entity.getStatus().getId(),
+                entity.getEmail(), entity.getAge());
+    }
+
     @Override
     public Optional<User> findUserByName(String name) {
         return  takeFirstNotNull(
