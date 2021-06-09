@@ -2,21 +2,21 @@ package model;
 
 import exception.UnknownEntityException;
 
-public enum UserRole {
-    ADMIN(1),
-    USER(2);
+public enum UserRole implements DbEntity {
+    ADMIN(1L),
+    USER(2L);
 
-    private final Integer id;
+    private final long id;
 
-    UserRole(Integer id) {
+    UserRole(long id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public static UserRole getRoleById(int id){
+    public static UserRole getRoleById(long id){
         for (UserRole role : values()) {
             if (role.getId() == id) {
                 return role;

@@ -2,7 +2,7 @@ package model;
 
 import java.util.Objects;
 
-public class User {
+public class User implements DbEntity {
     private final long id;
     private final String name;
     private final UserRole role;
@@ -44,5 +44,10 @@ public class User {
                 ", email='" + email + '\'' +
                 ", passwordHash='" + passwordHash + '\'' +
                 '}';
+    }
+
+    @Override
+    public Long getId() {
+        return id;
     }
 }

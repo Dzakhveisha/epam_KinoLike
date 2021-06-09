@@ -2,32 +2,40 @@ package model;
 
 import exception.UnknownEntityException;
 
-public enum FilmGenre {
-    COMEDY(1),
-    DRAMA(2),
-    ROMANCE(3),
-    ADVENTURE(4),
-    CARTOON(5),
-    DETECTIVE(6),
-    TRILLER(7),
-    HORROR(8);
+public enum FilmGenre implements DbEntity {
+    COMEDY(1L),
+    DRAMA(2L),
+    ROMANCE(3L),
+    ADVENTURE(4L),
+    CARTOON(5L),
+    DETECTIVE(6L),
+    TRILLER(7L),
+    HORROR(8L);
 
-    private final Integer id;
+    private final Long id;
 
-    FilmGenre(Integer id) {
+    FilmGenre(Long id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public static FilmGenre getRoleById(int id){
+    public static FilmGenre getRoleById(long id){
         for (FilmGenre genre : values()) {
             if (genre.getId() == id) {
                 return genre;
             }
         }
         throw new UnknownEntityException("Impossible to find MovieGenre");
+    }
+
+    @Override
+    public String toString() {
+        return "FilmGenre{" +
+                "value=" + this.name() +
+                "id=" + id +
+                '}';
     }
 }

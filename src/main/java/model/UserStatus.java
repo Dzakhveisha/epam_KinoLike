@@ -2,23 +2,23 @@ package model;
 
 import exception.UnknownEntityException;
 
-public enum UserStatus {
-    LOOSER(1),
-    BEGINNER(2),
-    MIDDLE(3),
-    EXPERT(4);
+public enum UserStatus implements DbEntity {
+    LOOSER(1L),
+    BEGINNER(2L),
+    MIDDLE(3L),
+    EXPERT(4L);
 
-    private final Integer id;
+    private final long id;
 
-    UserStatus(Integer id) {
+    UserStatus(long id) {
         this.id = id;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public static UserStatus getStatusById(int id){
+    public static UserStatus getStatusById(long id){
         for (UserStatus status : values()) {
             if (status.getId() == id) {
                 return status;

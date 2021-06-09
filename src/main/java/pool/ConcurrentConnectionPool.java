@@ -14,9 +14,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ConcurConnectionPool implements ConnectionPool {
+public class ConcurrentConnectionPool implements ConnectionPool {
 
-    private static final ConcurConnectionPool instance = new ConcurConnectionPool();
+    private static final ConcurrentConnectionPool instance = new ConcurrentConnectionPool();
 
     private static final int START_POOL_SIZE = 8;
     private static final int MAX_CONNECTION_AMOUNT = 32;
@@ -32,11 +32,11 @@ public class ConcurConnectionPool implements ConnectionPool {
     private static AtomicBoolean initialized;
     private final AtomicInteger connectionsOpened;
 
-    static public ConcurConnectionPool getInstance() {
+    static public ConcurrentConnectionPool getInstance() {
         return instance;
     }
 
-    private ConcurConnectionPool() {
+    private ConcurrentConnectionPool() {
         initialized = new AtomicBoolean(false);
         connectionsOpened = new AtomicInteger(0);
         PropertyReader propertyReader = PropertyReader.getInstance();

@@ -22,12 +22,12 @@ import java.util.concurrent.Executor;
 class PooledConnection implements Connection {
     private final Connection connection;
 
-    public PooledConnection(Connection con) throws SQLException {
+    PooledConnection(Connection con) throws SQLException {
         this.connection = con;
         this.connection.setAutoCommit(true);
     }
 
-    public void reallyClose() throws SQLException {
+    void reallyClose() throws SQLException {
         connection.close();
     }
 
@@ -79,10 +79,10 @@ class PooledConnection implements Connection {
         if (connection.isReadOnly()) {
             connection.setReadOnly(false);
         }
-        if (!ConcurConnectionPool.getInstance().busyConQueue.remove(this)) {
+        if (!ConcurrentConnectionPool.getInstance().busyConQueue.remove(this)) {
             throw new SQLException("Error deleting connection from busy connection pool");
         }
-        if (!ConcurConnectionPool.getInstance().busyConQueue.remove(this)) {
+        if (!ConcurrentConnectionPool.getInstance().busyConQueue.remove(this)) {
             throw new SQLException("Error allocating connection in the pool");
         }
     }
