@@ -5,16 +5,16 @@ public class Movie implements DbEntity {
     private final String name;
     private final int year;
     private final String description;
-    private final String country;
+    private final long country;
     private final Float rating;
     private final FilmGenre genre;
 
-    public Movie(long id,String name, int year, String description, String country, float rating, int genreInt) {
+    public Movie(long id,String name, int year, String description, long countryId, float rating, int genreInt) {
         this.id = id;
         this.name = name;
         this.year = year;
         this.description = description;
-        this.country = country;
+        this.country = countryId;
         this.rating = rating;
         this.genre = FilmGenre.getRoleById(genreInt);
     }
@@ -31,7 +31,7 @@ public class Movie implements DbEntity {
         return description;
     }
 
-    public String getCountry() {
+    public Long getCountry() {
         return country;
     }
 

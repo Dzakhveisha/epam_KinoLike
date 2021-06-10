@@ -14,12 +14,12 @@ import java.util.Optional;
 
 public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
 
-    private static final String MOVIE_TABLE_NAME = "movies";
+    private static final String MOVIE_TABLE_NAME = "movie";
     private static final String MOVIE_ID = "id";
-    private static final String MOVIE_NAME = "name";
+    private static final String MOVIE_NAME = "m_name";
     private static final String MOVIE_YEAR = "year";
     private static final String MOVIE_DESCRIPTION = "description";
-    private static final String MOVIE_COUNTRY = "country";
+    private static final String MOVIE_COUNTRY = "countryId";
     private static final String MOVIE_RATING = "rating";
     private static final String MOVIE_GENRE_ID = "genreId";
 
@@ -49,7 +49,7 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
                 resultSet.getString(MOVIE_NAME),
                 resultSet.getInt(MOVIE_YEAR),
                 resultSet.getString(MOVIE_DESCRIPTION),
-                resultSet.getString(MOVIE_COUNTRY),
+                resultSet.getLong(MOVIE_COUNTRY),
                 resultSet.getFloat(MOVIE_RATING),
                 resultSet.getInt(MOVIE_GENRE_ID));
     }
@@ -65,6 +65,23 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
     protected String getFieldsNames() {
         return String.format("%s, %s, %s, %s, %s, %s",
                 MOVIE_NAME, MOVIE_YEAR, MOVIE_DESCRIPTION, MOVIE_COUNTRY, MOVIE_RATING, MOVIE_GENRE_ID);
+    }
+
+    @Override
+    protected String getFieldsNamesForUpdate() {
+        return String.format("%s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? ",
+                MOVIE_NAME, MOVIE_YEAR, MOVIE_DESCRIPTION, MOVIE_COUNTRY, MOVIE_RATING, MOVIE_GENRE_ID);
+    }
+
+    @Override
+    protected void prepareForUpdate(PreparedStatement statement, Movie entity) throws SQLException {
+        statement.setString(1, entity.getName());
+        statement.setLong(2, entity.getYear());
+        statement.setString(3,entity.getDescription());
+        statement.setLong(4,entity.getCountry());
+        statement.setFloat(5,entity.getRating());
+        statement.setLong(6,entity.getGenre().getId());
+        statement.setLong(7,entity.getId());
     }
 
     private static SqlThrowingConsumer<PreparedStatement> whereName(String name) {

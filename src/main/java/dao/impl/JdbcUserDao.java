@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public class JdbcUserDao extends BaseDao<User> implements UserDao {
 
-    private static final String USER_TABLE_NAME = "users";
+    private static final String USER_TABLE_NAME = "user";
     private static final String USER_ID = "id";
     private static final String USER_LOGIN = "login";
     private static final String USER_AGE = "age";
@@ -44,6 +44,23 @@ public class JdbcUserDao extends BaseDao<User> implements UserDao {
     protected String getFieldsNames() {
         return String.format("%s, %s, %s, %s, %s, %s",
                 USER_LOGIN, USER_PASSWORD, USER_ROLE_ID, USER_STATUS_ID, USER_EMAIL, USER_AGE);
+    }
+
+    @Override
+    protected String getFieldsNamesForUpdate() {
+        return String.format("%s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? ",
+                USER_LOGIN, USER_PASSWORD, USER_ROLE_ID, USER_STATUS_ID, USER_EMAIL, USER_AGE);
+    }
+
+    @Override
+    protected void prepareForUpdate(PreparedStatement statement, User entity) throws SQLException {
+        statement.setString(1, entity.getName());
+        statement.setString(2, entity.getPasswordHash());
+        statement.setLong(3,entity.getRole().getId());
+        statement.setLong(4,entity.getStatus().getId());
+        statement.setString(5,entity.getEmail());
+        statement.setLong(6,entity.getAge());
+        statement.setLong(7,entity.getId());
     }
 
     @Override
