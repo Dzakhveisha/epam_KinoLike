@@ -1,0 +1,188 @@
+body, html{
+    background-color: #eeeeee ;
+    margin: 0px ;
+    height: 100% ;
+}
+header, footer {
+    background-color: #303841;
+    position: relative;
+    width: 100% ;
+}
+
+.logo, .logo2 {
+    width: 70px;
+    margin: 0.5% 1% 0% 2%;
+    float: left;
+}
+.logo:hover{
+    transform: scale(1.1, 1.1);
+}
+
+.menu{
+    list-style: none;
+    margin: 0px ;
+    text-align: right;
+}
+.menu li {
+    display: inline-block;
+    margin: 2% 1% ;
+}
+.menu .search {
+    width: 340px;
+    height: 30px;
+    font-family: Verdana, sans-serif;
+}
+.menu a, #preview #textConteiner a{
+    text-decoration: none ;
+    color: white;
+    font-family: Verdana, sans-serif;
+
+    padding: 10px 20px ;
+    border: 2px solid #D72323;
+    border-radius: 25px;
+}
+.menu a:hover {
+    border: 2px solid white;
+}
+
+.search{
+    padding-left: 10px;
+    border: 2px solid white;
+    border-radius: 5px;
+    outline: none;
+    background: #eeeeee;
+}
+
+.footerMenu{
+    list-style: none;
+    margin: 0px ;
+    text-align: right;
+    height: 100px ;
+}
+.footerMenu li {
+    display: inline-block;
+    margin: 2% 1% ;
+}
+.footerMenu a{
+    text-decoration: none ;
+    color: white;
+    font-family: Verdana, sans-serif;
+
+    padding: 10px 20px ;
+}
+.footerMenu a:hover {
+    color: #D72323 ;
+}
+.footerMenu #name{
+    color: #dddddd;
+    font-family: Verdana, sans-serif;
+    margin: 10px 40px ;
+}
+footer{
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
+}
+
+
+#mainContent {
+    width: 100% ;
+    height: 100% ;
+    text-align: center;
+    font-family: Verdana, sans-serif;
+}
+
+#mainContent h2{
+    color: #D72323;
+}
+
+.enterForm, .registerForm {
+    width: 50% ;
+    margin: 1% auto ;
+    padding: 20px 10px ;
+
+    background: #eeeeee;
+    border: 4px solid #303841;
+    border-radius: 25px;
+}
+.enterForm input .registerForm input{
+    width: 250px ;
+}
+.enterForm label, .registerForm label{
+    color: #D72323;
+}
+.enterForm *, .registerForm *{
+    margin-bottom: 20px;
+}
+
+@media (min-width: 1200px) {
+
+}
+
+@media (min-width: 1000px) and (max-width: 1199px)  {
+    .menu .search {
+        width: 250px ;
+    }
+    header {
+        height: 100px ;
+    }
+    #mainContent {
+        grid-column-gap : 10px;
+    }
+}
+
+@media (min-width: 789px) and (max-width: 1001px) {
+    .menu a, #preview #textConteiner a{
+        padding: 6px 10px ;
+    }
+    .menu .search{
+        width: 170px ;
+    }
+    .menu {
+        padding-inline-start: 0px;
+        padding-top: 1% ;
+    }
+    header {
+        height: 100px ;
+    }
+}
+
+@media (min-width: 200px) and (max-width: 790px) {
+    .menu li {
+        display: block;
+        margin:  0 15% 40px ;
+    }
+    .menu a, #preview #textConteiner a{
+        padding: 10px 20px ;
+    }
+    .menu .search {
+        width: 200px ;
+        margin-top: 15px ;
+    }
+    .menu {
+        padding-inline-start: 0px;
+    }
+    header {
+        height: 380px;
+    }
+    .footerMenu{
+        height: 150px ;
+    }
+    .enterForm input, .registerForm input{
+        width: 170px ;
+        margin: 10px auto ;
+    }
+
+}
+
+@media (min-width: 200px) and (max-width: 475px){
+    .enterForm input, .registerForm inputs{
+        width: 120px ;
+        margin: 10px auto ;
+    }
+    footer{
+        height: 200px ;
+    }
+
+}
