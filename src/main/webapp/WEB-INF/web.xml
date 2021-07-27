@@ -5,13 +5,72 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" 
         version="3.1">
-    
+
+    <context-param>
+        <param-name>IMAGE_UPLOAD_PATH</param-name>
+        <param-value>D:/images/</param-value>
+    </context-param>
+    <context-param>
+        <param-name>DATABASE_IMAGE_BASE</param-name>
+        <param-value>images/</param-value>
+    </context-param>
+
     <servlet>
         <servlet-name>main</servlet-name>
         <servlet-class>com.epam.jwd.web.Controller</servlet-class>
     </servlet>
+
+    <servlet>
+        <servlet-name>ImageServlet</servlet-name>
+        <servlet-class>com.epam.jwd.web.</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>main</servlet-name>
         <url-pattern>/controller</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ImageServlet</servlet-name>
+        <url-pattern>/images/*</url-pattern>
+    </servlet-mapping>
+
+    <filter>
+        <filter-name>Charset Filter</filter-name>
+        <filter-class>com.epam.jwd.web.filter.CharsetFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>contentType</param-name>
+            <param-value>text/html;charset=utf8</param-value>
+        </init-param>
+    </filter>
+
+    <filter>
+        <filter-name>LanguageFilter</filter-name>
+        <filter-class>com.epam.jwd.web.filter.LanguageFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>PageAccessFilter</filter-name>
+        <filter-class>com.epam.jwd.web.filter.RoleFilter</filter-class>
+    </filter>
+
+
+    <filter-mapping>
+        <filter-name>Charset Filter</filter-name>
+        <servlet-name>main</servlet-name>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>LanguageFilter</filter-name>
+        <servlet-name>main</servlet-name>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>PageAccessFilter</filter-name>
+        <servlet-name>main</servlet-name>
+    </filter-mapping>
 </web-app>

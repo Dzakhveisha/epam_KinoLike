@@ -1,0 +1,35 @@
+#adminCont{
+    grid-area: adminCont;
+    margin: 0px 20px;
+    padding: 10px 10px 10px 30px;
+    background-color: #dddddd;
+    font-size: 1.5em;
+    border: 2px solid #303841;
+    border-radius: 15px;
+}
+#usersCont{
+    grid-area: usersCont;
+    margin: 20px;
+    padding: 0px 40px;
+    background-color: #dddddd;
+    border-radius: 15px;
+}
+#filmsCont{
+    grid-area: filmsCont;
+    margin: 20px;
+    padding: 0px 40px;
+    background-color: #dddddd;
+    border-radius: 15px;
+}
+#mainContent{
+    display: grid;
+    grid-template-columns: 0.8fr 1fr;
+    grid-auto-rows: minmax(100px, auto);
+    grid-template-areas:
+      "adminCont adminCont"
+      "usersCont filmsCont";
+    width: 100%;
+}
+.red{
+    color: #D72323;
+}

@@ -14,9 +14,13 @@ public enum AppCommand {
     SHOW_ADMIN(new ShowAdminPageCommand(), ADMIN),
     SHOW_REGISTER(new ShowRegisterPageCommand(), UNAUTHORIZED),
     SHOW_LIKES(new ShowLikesPageCommand()),
+    SHOW_REVIEW(new ShowReviewPageCommand(), USER, ADMIN),
+    SHOW_NEW_FILM(new ShowNewFilmPageCommand(), ADMIN),
+    NEW_FILM(new NewFilmCommand(), ADMIN),
     REGISTER(new RegisterCommand(), UNAUTHORIZED),
     LOGIN(new LoginCommand(), UNAUTHORIZED),
     LOGOUT(new LogoutCommand(), ADMIN, USER),
+    REVIEW(new ReviewCommand(), ADMIN, USER),
     DEFAULT(new ShowMainPageCommand()),
     ERROR(new ShowErrorPageCommand());
 

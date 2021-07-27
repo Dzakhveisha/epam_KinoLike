@@ -6,47 +6,52 @@
     <title>Admin</title>
     <style>
         <%@include file="/WEB-INF/css/mainStyle.css" %>
+        <%@include file="/WEB-INF/css/adminPage.css" %>
     </style>
 </head>
 <body>
-<header>
-    <a href=${pageContext.request.contextPath}/controller?command=show_main">
-        <img class="logo" src="../../img/logo.png" alt=" logo ">
-    </a>
-    <ul class="menu">
-        <li>
-            <form action="" method="get">
-                <input class="search" name="s" placeholder="Искать здесь..." type="search">
-            </form>
-
-        </li>
-        <li><a href="${pageContext.request.contextPath}/controller?command=show_main&sort=new"> Новинки </a></li>
-        <li><a href="${pageContext.request.contextPath}/controller?command=show_main&sort=popular"> Популярное </a></li>
-
-        <c:choose>
-            <c:when test="${empty sessionScope.user}">
-                <a href="${pageContext.request.contextPath}/controller?command=show_login"> Любимое </a>
-                <li><a href="${pageContext.request.contextPath}/controller?command=show_register"> Зарегаться </a></li>
-            </c:when>
-            <c:otherwise>
-                <li><a href="${pageContext.request.contextPath}/controller?command=show_likes"> Любимое </a></li>
-            </c:otherwise>
-        </c:choose>
-
-        <c:if test="${not empty sessionScope.role.equals(UserRole.ADMIN)}">
-            <li><a href="${pageContext.request.contextPath}/controller?command=show_admin"> ADMIN_PAGE </a></li>
+<jsp:include page="constJsp/header.jsp"/>
+<div id="mainContent">
+    <div id="adminCont">
+        <p> Администратор: <b>${admin.name}, ${admin.age}</b></p>
+        <p> e-mail: <b>${admin.email}</b></p>
+    </div>
+    <div id="usersCont">
+        <h3 class="red"> Все пользователи:</h3>
+        <c:if test="${not empty requestScope.users}">
+            <c:forEach var="user" items="${requestScope.users}">
+                <hr>
+                <div class="userItem">
+                    <p>Логин: <b>${user.name}</b></p>
+                    <p>Возраст: ${user.age}</p>
+                    <p>Статус: ${user.role}, ${user.status}</p>
+                    <p>email: ${user.email}</p>
+                    <button> изменить статус </button>
+                </div>
+            </c:forEach>
+            <hr>
         </c:if>
-
-        <li><c:choose>
-            <c:when test="${empty sessionScope.user}">
-                <a href="${pageContext.request.contextPath}/controller?command=show_login">LOGIN</a>
-            </c:when>
-            <c:otherwise>
-                <a href="${pageContext.request.contextPath}/controller?command=logout">LOGOUT</a>
-            </c:otherwise>
-        </c:choose></li>
-    </ul>
-</header>
-<h2> This is page for admin </h2>
+    </div>
+    <div id="filmsCont">
+        <h3 class="red"> Все фильмы:</h3>
+        <button onclick="window.location.href = '${pageContext.request.contextPath}/controller?command=show_new_film'"> Добавить новый фильм </button>
+        <c:if test="${not empty requestScope.films}">
+            <c:forEach var="film" items="${requestScope.films}">
+                <hr>
+                <div class="filmItem">
+                    <h2>${film.name}</h2>
+                    <h3> ${film.genre.name()}</h3>
+                    <h3>${film.year}, <i> ${film.country} </i></h3>
+                    <p> ${film.description} </p>
+                    <h4> ${film.rating} </h4>
+                    <button> изменить </button>
+                    <button> удалить </button>
+                </div>
+            </c:forEach>
+            <hr>
+        </c:if>
+    </div>
+</div>
+<jsp:include page="constJsp/footer.jsp" />
 </body>
 </html>

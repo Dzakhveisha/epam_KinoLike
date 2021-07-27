@@ -1,7 +1,7 @@
 package com.epam.jwd.web.model;
 
 public class Movie implements DbEntity {
-    private final long id;
+    private long id;
     private final String name;
     private final int year;
     private final String description;
@@ -16,6 +16,15 @@ public class Movie implements DbEntity {
         this.description = description;
         this.country = countryId;
         this.rating = rating;
+        this.genre = FilmGenre.getGenreById(genreInt);
+    }
+
+    public Movie(String name, Integer year, String description, long countryId, Long genreInt) {
+        this.name = name;
+        this.year = year;
+        this.description = description;
+        this.country = countryId;
+        this.rating = (float) 0;
         this.genre = FilmGenre.getGenreById(genreInt);
     }
 

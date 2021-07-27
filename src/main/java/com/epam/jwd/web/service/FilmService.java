@@ -9,6 +9,7 @@ import com.epam.jwd.web.model.Movie;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class FilmService {
 
@@ -59,5 +60,12 @@ public class FilmService {
         return movieDao.findMoviesByGenre(genre);
     }
 
+    public Movie findByName(String name){
+        return movieDao.findMovieByName(name).orElse(null);
+    }
+
+    public Movie create(Movie movie){
+        return movieDao.save(movie);
+    }
 }
 
