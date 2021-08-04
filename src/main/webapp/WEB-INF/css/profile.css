@@ -1,0 +1,19 @@
+#mainContent{
+    grid-template-areas: "profile reviews reviews reviews";
+}
+#profile{
+    grid-area: profile;
+    margin: 0px 70px;
+}
+#userInf{
+    border: 2px solid #D72323;
+    border-radius: 25px;
+    height: 260px;
+    padding: 20px;
+}
+#reviews{
+    grid-area: reviews;
+}
+.filmName{
+    margin: 20px;
+}

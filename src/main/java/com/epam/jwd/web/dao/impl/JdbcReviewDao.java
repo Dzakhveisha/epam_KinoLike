@@ -10,6 +10,7 @@ import com.epam.jwd.web.model.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -23,6 +24,7 @@ public class JdbcReviewDao extends BaseDao<Review> implements ReviewDao {
 
     private static JdbcReviewDao instance;
     private final String findByFilmAndUserSql;
+    private final String findByUserSql;
 
     public static JdbcReviewDao getInstance() {
         JdbcReviewDao localInstance = instance;
@@ -42,6 +44,7 @@ public class JdbcReviewDao extends BaseDao<Review> implements ReviewDao {
         super(REVIEW_TABLE_NAME);
         this.findByFilmAndUserSql = String.format(FIND_BY_PARAM_SQL_TEMPLATE, REVIEW_TABLE_NAME, REVIEW_FILM_ID)
                 + String.format(" AND %s = ?", REVIEW_USER_ID);
+        this.findByUserSql = String.format(FIND_BY_PARAM_SQL_TEMPLATE, REVIEW_TABLE_NAME, REVIEW_USER_ID);
     }
 
     @Override
@@ -79,6 +82,17 @@ public class JdbcReviewDao extends BaseDao<Review> implements ReviewDao {
     public Optional<Review> findByFilmAndUser(Movie movie, User user) {
         return takeFirstNotNull(
                 findPreparedEntities(whereUserAndFilm(movie.getId(), user.getId()), findByFilmAndUserSql));
+    }
+
+    @Override
+    public List<Review> findAllByUser(User user) {
+        return findPreparedEntities(whereUser(user.getId()), findByUserSql);
+    }
+
+    private SqlThrowingConsumer<PreparedStatement> whereUser(Long userId) {
+        return statement -> {
+            statement.setString(1, userId.toString());
+        };
     }
 
     private static SqlThrowingConsumer<PreparedStatement> whereUserAndFilm(Long filmId, Long userId) {

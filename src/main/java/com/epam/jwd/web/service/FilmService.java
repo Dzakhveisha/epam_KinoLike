@@ -64,6 +64,11 @@ public class FilmService {
         return movieDao.findMovieByName(name).orElse(null);
     }
 
+    public Movie findById(Long id){
+        return movieDao.findById(id).orElse(null);
+    }
+
+
     public Movie create(Movie movie){
         return movieDao.save(movie);
     }

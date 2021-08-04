@@ -40,6 +40,10 @@ public class ReviewService {
         return reviewDao.findAll();
     }
 
+    public List<Review> findAllByUser(User user) {
+        return reviewDao.findAllByUser(user);
+    }
+
     public Review findBy(Movie movie, User user) throws UnknownEntityException {
         return reviewDao.findByFilmAndUser(movie, user).orElseThrow(() -> new UnknownEntityException(" Review for this user and this movie not faund!"));
     }
