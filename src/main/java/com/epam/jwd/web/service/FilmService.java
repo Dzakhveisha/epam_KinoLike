@@ -67,5 +67,14 @@ public class FilmService {
     public Movie create(Movie movie){
         return movieDao.save(movie);
     }
+
+    public void deleteByName(String name){
+        Movie movie = findByName(name);
+        movieDao.delete(movie.getId());
+    }
+
+    public Movie update(Movie movie){
+        return movieDao.update(movie);
+    }
 }
 

@@ -5,6 +5,7 @@ import com.epam.jwd.web.dao.ReviewDao;
 import com.epam.jwd.web.dao.impl.JdbcGenreDao;
 import com.epam.jwd.web.dao.impl.JdbcMovieDao;
 import com.epam.jwd.web.dao.impl.JdbcReviewDao;
+import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.model.Review;
@@ -39,8 +40,8 @@ public class ReviewService {
         return reviewDao.findAll();
     }
 
-    public Review findBy(Movie movie, User user){
-        return reviewDao.findByFilmAndUser(movie, user).orElse(null);
+    public Review findBy(Movie movie, User user) throws UnknownEntityException {
+        return reviewDao.findByFilmAndUser(movie, user).orElseThrow(() -> new UnknownEntityException(" Review for this user and this movie not faund!"));
     }
 
     public Review create(Review review) {

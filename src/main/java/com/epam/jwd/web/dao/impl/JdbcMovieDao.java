@@ -22,6 +22,7 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
     private static final String MOVIE_COUNTRY = "countryId";
     private static final String MOVIE_RATING = "rating";
     private static final String MOVIE_GENRE_ID = "genreId";
+    private static final String MOVIE_IMG_PATH = "imagePath";
 
     private final String findByNameSql;
     private final String findByGenreSql;
@@ -77,26 +78,27 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
                 resultSet.getString(MOVIE_DESCRIPTION),
                 resultSet.getLong(MOVIE_COUNTRY),
                 resultSet.getFloat(MOVIE_RATING),
-                resultSet.getInt(MOVIE_GENRE_ID));
+                resultSet.getInt(MOVIE_GENRE_ID),
+                resultSet.getString(MOVIE_IMG_PATH));
     }
 
     @Override
     protected String getValuesForSaving(Movie entity) {
-        return String.format("('%s', %d, '%s', '%s', %d, %d)", entity.getName(), entity.getYear(),
+        return String.format("('%s', %d, '%s', '%s', %d, %d, '%s')", entity.getName(), entity.getYear(),
                 entity.getDescription(), entity.getCountry(),
-                0, entity.getGenre().getId());
+                0, entity.getGenre().getId(), entity.getImagePath());
     }
 
     @Override
     protected String getFieldsNames() {
-        return String.format("%s, %s, %s, %s, %s, %s",
-                MOVIE_NAME, MOVIE_YEAR, MOVIE_DESCRIPTION, MOVIE_COUNTRY, MOVIE_RATING, MOVIE_GENRE_ID);
+        return String.format("%s, %s, %s, %s, %s, %s, %s",
+                MOVIE_NAME, MOVIE_YEAR, MOVIE_DESCRIPTION, MOVIE_COUNTRY, MOVIE_RATING, MOVIE_GENRE_ID, MOVIE_IMG_PATH);
     }
 
     @Override
     protected String getFieldsNamesForUpdate() {
-        return String.format("%s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? ",
-                MOVIE_NAME, MOVIE_YEAR, MOVIE_DESCRIPTION, MOVIE_COUNTRY, MOVIE_RATING, MOVIE_GENRE_ID);
+        return String.format("%s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ?, %s = ? ",
+                MOVIE_NAME, MOVIE_YEAR, MOVIE_DESCRIPTION, MOVIE_COUNTRY, MOVIE_RATING, MOVIE_GENRE_ID, MOVIE_IMG_PATH);
     }
 
     @Override
@@ -107,7 +109,8 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
         statement.setLong(4, entity.getCountry());
         statement.setFloat(5, entity.getRating());
         statement.setLong(6, entity.getGenre().getId());
-        statement.setLong(7, entity.getId());
+        statement.setString(7, entity.getImagePath());
+        statement.setLong(8, entity.getId());
     }
 
     private static SqlThrowingConsumer<PreparedStatement> whereName(String name) {

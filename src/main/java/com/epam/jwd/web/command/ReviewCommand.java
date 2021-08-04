@@ -1,5 +1,6 @@
 package com.epam.jwd.web.command;
 
+import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.model.Review;
 import com.epam.jwd.web.model.User;
@@ -34,7 +35,9 @@ public class ReviewCommand implements Command {
         User user = userService.findByLogin(name);
         Movie movie = filmService.findByName(filmName);
 
-        if (reviewService.findBy(movie, user) == null) {
+        try {
+            reviewService.findBy(movie, user);
+        } catch (UnknownEntityException e){
             reviewService.create(new Review(user.getId(), movie.getId(), value, text));
             return new CommandResponse() {
                 @Override
@@ -47,20 +50,19 @@ public class ReviewCommand implements Command {
                     return true;
                 }
             };
-        } else {
-            request.setAttribute("error", "Вы уже оставили отзыв на этот фильм!!");
-            return new CommandResponse() {
-                @Override
-                public String getPath() {
-                    return "/WEB-INF/jsp/review.jsp";
-                }
-
-                @Override
-                public boolean isRedirect() {
-                    return false;
-                }
-            };
         }
+        request.setAttribute("error", "Вы уже оставили отзыв на этот фильм!!");
+        return new CommandResponse() {
+            @Override
+            public String getPath() {
+                return "/WEB-INF/jsp/review.jsp";
+            }
+
+            @Override
+            public boolean isRedirect() {
+                return false;
+            }
+        };
     }
 }
 

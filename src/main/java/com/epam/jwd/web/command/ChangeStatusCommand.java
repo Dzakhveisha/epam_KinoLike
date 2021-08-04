@@ -1,8 +1,5 @@
-package com.epam.jwd.web.command.page;
+package com.epam.jwd.web.command;
 
-import com.epam.jwd.web.command.Command;
-import com.epam.jwd.web.command.CommandRequest;
-import com.epam.jwd.web.command.CommandResponse;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.model.User;
@@ -13,26 +10,31 @@ import com.epam.jwd.web.service.UserService;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
-public class ShowAdminPageCommand implements Command {
-
+public class ChangeStatusCommand implements Command{
     private static final String FILMS_ATTRIBUTE = "films";
     private static final String USERS_ATTRIBUTE = "users";
     private static final String ADMIN_ATTRIBUTE = "admin";
     private static final String STATUSES_ATTRIBUTE = "statuses";
     private static final String GENRES_ATTRIBUTE = "genres";
-    private final UserService userService;
     private final FilmService filmService;
+    private final UserService userService;
 
-    public ShowAdminPageCommand() {
+    public ChangeStatusCommand() {
         filmService = FilmService.getInstance();
         userService = UserService.getInstance();
     }
-
     @Override
     public CommandResponse execute(CommandRequest request) {
+
+        String userName = request.getParameter("user");
+        User user = userService.findByLogin(userName);
+        UserStatus newStatus = UserStatus.valueOf(request.getParameter("status"));
+        userService.update(new User(user.getId(), user.getName(), user.getAge(),
+                user.getRole().getId(), user.getEmail(), user.getPasswordHash(), newStatus.getId()));
+
         final HttpSession session = request.getCurrentSession().get();
-        String name = (String) session.getAttribute("user");
-        User curUser = userService.findByLogin(name);
+        String curUserName = (String) session.getAttribute("user");
+        User curUser = userService.findByLogin(curUserName);
         List<Movie> films = filmService.findAll();
         List<User> users = userService.findAll();
         List<UserStatus> statuses = userService.findAllStatuses();

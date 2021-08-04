@@ -1,5 +1,7 @@
 package com.epam.jwd.web.model;
 
+import com.epam.jwd.web.exception.UnknownEntityException;
+
 import java.util.Objects;
 
 public class User implements DbEntity {
@@ -15,7 +17,11 @@ public class User implements DbEntity {
         this.id = id;
         this.name = name;
         this.age = age;
-        this.role = UserRole.getRoleById(roleInt);
+        try {
+            this.role = UserRole.getRoleById(roleInt);
+        } catch (UnknownEntityException e) {
+            this.role = UserRole.USER;
+        }
         this.email = email;
         this.passwordHash = password;
         this.status = UserStatus.getStatusById(statusint);
@@ -45,7 +51,11 @@ public class User implements DbEntity {
         this.id = id;
         this.name = name;
         this.age = age;
-        this.role = UserRole.getRoleById(roleInt);
+        try {
+            this.role = UserRole.getRoleById(roleInt);
+        } catch (UnknownEntityException e) {
+            this.role = UserRole.USER;
+        }
         this.email = email;
         this.passwordHash = password;
         this.status = UserStatus.getStatusById(statusint);

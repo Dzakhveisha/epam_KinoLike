@@ -21,6 +21,11 @@
     background-color: #dddddd;
     border-radius: 15px;
 }
+#filmsCont img{
+    height: 200px;
+    margin: 20px;
+    text-align: center;
+}
 #mainContent{
     display: grid;
     grid-template-columns: 0.8fr 1fr;
@@ -32,4 +37,24 @@
 }
 .red{
     color: #D72323;
+}
+
+form{
+    margin: 0em;
+}
+.btnApply{
+    background-color: #e1ffdc;
+}
+#filmsCont .btnApply{
+    float: left;
+}
+.btnDelete{
+    background-color: #ffa7a7;
+    margin-left: 20px;
+}
+
+#addNewFilm{
+    background-color: #e1ffdc;
+    height: 35px;
+    width: 250px;
 }

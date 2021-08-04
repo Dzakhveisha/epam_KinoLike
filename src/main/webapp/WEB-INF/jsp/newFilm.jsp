@@ -17,7 +17,7 @@
             <a href="${pageContext.request.contextPath}/controller?command=show_login"> Try again </a>
         </c:when>
         <c:otherwise>
-            <form class="enterForm" action="${pageContext.request.contextPath}/controller?command=new_film" method="post">
+            <form enctype="multipart/form-data" class="enterForm" action="${pageContext.request.contextPath}/controller?command=new_film" method="post">
                 <label for="fieldName"> Название </label><br>
                 <input required type="text" id="fieldName" name="name"><br>
                 <label for="fieldYear"> Год выпуска </label><br>
@@ -34,7 +34,8 @@
                         </c:forEach>
                     </c:if>
                 </select><br>
-                <input type="file" id="poster" name="image">
+                <input type="file" id="poster" name=image onchange="document.getElementById('fileName').value = document.getElementById('poster').value">
+                <input type="hidden" id="fileName" name="fileName">
                 <input type="submit" value="OK">
             </form>
         </c:otherwise>

@@ -3,6 +3,9 @@ body {
     margin: 0px;
     width: 100%;
 }
+#mainContent{
+    min-height: 100%;
+}
 
 header, footer {
     background-color: #303841;
@@ -103,7 +106,8 @@ header, footer {
     display: grid;
     grid-template-areas:
         "picture description"
-        "picture description";
+        "picture description"
+        "buttons buttons";
 }
 
 .movieItem img {
@@ -129,15 +133,18 @@ header, footer {
 }
 
 .buttons {
+    grid-area: buttons;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     text-decoration: none;
+    padding: 20px;
 }
 
 .setLike {
     padding: 0;
     border: none;
+    margin-right: 20px;
     font: inherit;
     color: inherit;
     background-color: transparent;
@@ -145,12 +152,19 @@ header, footer {
 }
 
  .setReview {
-    padding: 10px;
+    padding: 15px 60px;
     font: inherit;
     color: inherit;
     background-color: #dddddd;
     cursor: pointer;
 }
+
+ .review{
+     background-color: #b7c8d2;;
+     padding: 20px;
+     width: 80%;
+     border-radius: 15px;
+ }
 
 .buttons button img {
     height: 45px;

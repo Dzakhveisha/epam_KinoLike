@@ -21,7 +21,7 @@ public enum UserRole implements DbEntity {
         return id;
     }
 
-    public static UserRole getRoleById(long id){
+    public static UserRole getRoleById(long id) throws UnknownEntityException {
         for (UserRole role : values()) {
             if (role.getId() == id) {
                 return role;

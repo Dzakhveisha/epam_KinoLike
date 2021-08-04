@@ -1,10 +1,13 @@
 package com.epam.jwd.web.service;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import com.epam.jwd.web.dao.Dao;
 import com.epam.jwd.web.dao.UserDao;
 import com.epam.jwd.web.dao.impl.JdbcUserDao;
+import com.epam.jwd.web.dao.impl.JdbcUserStatusDao;
 import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.User;
+import com.epam.jwd.web.model.UserStatus;
 
 import java.util.List;
 
@@ -16,6 +19,7 @@ public class UserService {
     private static final String NOT_FOUND_MSG = "User with such login does not exist!";
 
     private final UserDao userDao;
+    private final Dao statusDao;
     private final BCrypt.Hasher hasher;
     private final BCrypt.Verifyer verifier;
 
@@ -23,6 +27,7 @@ public class UserService {
         userDao = JdbcUserDao.getInstance();
         hasher = BCrypt.withDefaults();
         verifier = BCrypt.verifyer();
+        statusDao = JdbcUserStatusDao.getInstance();
     }
 
     public static UserService getInstance() {
@@ -49,7 +54,7 @@ public class UserService {
                 user.getEmail(), encryptPassword, user.getStatus().getId()));
     }
 
-    public User findByLogin(String login){
+    public User findByLogin(String login) throws UnknownEntityException {
         return userDao.findUserByName(login).orElseThrow(() -> new UnknownEntityException(NOT_FOUND_MSG));
     }
 
@@ -70,6 +75,14 @@ public class UserService {
         }catch(UnknownEntityException e){
             return true;
         }
+    }
+
+    public User update(User user){
+       return userDao.update(user);
+    }
+
+    public List<UserStatus> findAllStatuses(){
+        return statusDao.findAll();
     }
 
 }

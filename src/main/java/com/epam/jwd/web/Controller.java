@@ -6,15 +6,14 @@ import com.epam.jwd.web.command.CommandResponse;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.IOException;
 import java.util.Optional;
 
 @WebServlet
+@MultipartConfig
 public class Controller extends HttpServlet {
 
     private static final String COMMAND_TYPE_PARAM = "command";
@@ -63,6 +62,21 @@ public class Controller extends HttpServlet {
             @Override
             public String getParameter(String name) {
                 return req.getParameter(name);
+            }
+
+            @Override
+            public Part getPart(String part) {
+                try {
+                    return req.getPart(part);
+                } catch (IOException | ServletException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            public HttpServletRequest getReq() {
+                return req;
             }
         });
         if (response.isRedirect()){

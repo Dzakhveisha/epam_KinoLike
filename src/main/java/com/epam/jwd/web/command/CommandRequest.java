@@ -1,6 +1,8 @@
 package com.epam.jwd.web.command;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import java.util.Optional;
 
 public interface CommandRequest {
@@ -14,4 +16,8 @@ public interface CommandRequest {
     void setAttribute(String name, Object value);
 
     String getParameter(String name);
+
+    Part getPart(String part);
+
+    HttpServletRequest getReq();
 }

@@ -8,8 +8,9 @@ public class Movie implements DbEntity {
     private final long country;
     private final Float rating;
     private final FilmGenre genre;
+    private final String imagePath;
 
-    public Movie(long id,String name, int year, String description, long countryId, float rating, int genreInt) {
+    public Movie(long id, String name, int year, String description, long countryId, float rating, long genreInt, String imagePath) {
         this.id = id;
         this.name = name;
         this.year = year;
@@ -17,15 +18,21 @@ public class Movie implements DbEntity {
         this.country = countryId;
         this.rating = rating;
         this.genre = FilmGenre.getGenreById(genreInt);
+        this.imagePath = imagePath;
     }
 
-    public Movie(String name, Integer year, String description, long countryId, Long genreInt) {
+    public Movie(String name, Integer year, String description, long countryId, Long genreInt, String imagePath) {
         this.name = name;
         this.year = year;
         this.description = description;
         this.country = countryId;
+        this.imagePath = imagePath;
         this.rating = (float) 0;
         this.genre = FilmGenre.getGenreById(genreInt);
+    }
+
+    public String getImagePath() {
+        return imagePath;
     }
 
     public String getName() {
