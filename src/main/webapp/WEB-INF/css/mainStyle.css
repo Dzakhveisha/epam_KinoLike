@@ -134,21 +134,8 @@ header, footer {
 
 .buttons {
     grid-area: buttons;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     text-decoration: none;
     padding: 20px;
-}
-
-.setLike {
-    padding: 0;
-    border: none;
-    margin-right: 20px;
-    font: inherit;
-    color: inherit;
-    background-color: transparent;
-    cursor: pointer;
 }
 
  .setReview {

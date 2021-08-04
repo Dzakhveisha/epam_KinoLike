@@ -33,33 +33,25 @@
                         <p> ${film.description} </p>
                         <h4> ${film.rating} </h4>
                     </div>
-                    <div class="buttons">
-                        <c:choose>
-                            <c:when test="${ requestScope.filmReviews.get(film.id) != null}">
-                                <div class="review">
-                                    <p> Ваш отзыв:</p>
-                                    <h3> ${filmReviews.get(film.id).value}</h3>
-                                    <q>${filmReviews.get(film.id).text}</q>
-                                </div>
-                            </c:when>
-                            <c:otherwise>
-                                <button class="setReview" type="button"
-                                        onclick=" window.location.href = '${pageContext.request.contextPath}/controller?command=show_review&film=${film.name}'">
-                                    Оставить отзыв
-                                </button>
-                            </c:otherwise>
-                        </c:choose>
-                        <button class="setLike" type="button" onclick="
-                                const url = '/setLike.php?f={filmName}';
-                                fetch(url).then(function (response) {
-                                return response.text();})
-                                .then(function (src) {
-                                    document.getElementById('{filmName}').src = src;
-                            });
-                            ">
-                            <img src="${pageContext.request.contextPath}/img/notLike.png" id="{filmName}">
-                        </button>
-                    </div>
+                    <c:if test="${not empty sessionScope.user}">
+                        <div class="buttons">
+                            <c:choose>
+                                <c:when test="${requestScope.filmReviews.get(film.id) != null}">
+                                    <div class="review">
+                                        <p> Ваш отзыв:</p>
+                                        <h3> ${filmReviews.get(film.id).value}</h3>
+                                        <q>${filmReviews.get(film.id).text}</q>
+                                    </div>
+                                </c:when>
+                                <c:otherwise>
+                                    <button class="setReview" type="button"
+                                            onclick=" window.location.href = '${pageContext.request.contextPath}/controller?command=show_review&film=${film.name}'">
+                                        Оставить отзыв
+                                    </button>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:if>
                 </div>
             </c:forEach>
         </c:if>
