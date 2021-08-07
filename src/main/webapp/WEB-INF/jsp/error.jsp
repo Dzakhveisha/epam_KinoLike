@@ -1,5 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setLocale value="${sessionScope.language != null ? sessionScope.language : 'ru'}" scope="session"/>
+<fmt:bundle basename="pagecontent" prefix="error.">
+
 <html>
 <head>
     <title>Error</title>
@@ -9,9 +14,10 @@
 </head>
 <body>
 <jsp:include page="constJsp/header.jsp" />
-
-    Что-то пошло не так!      !!!
-
+<div id="mainContent">
+    <p><fmt:message key="generalError"/></p>
+</div>
 </body>
 <jsp:include page="constJsp/footer.jsp" />
 </html>
+</fmt:bundle>

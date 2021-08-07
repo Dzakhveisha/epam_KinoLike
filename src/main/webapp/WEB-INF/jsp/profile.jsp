@@ -1,5 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
+<fmt:setLocale value="${sessionScope.language != null ? sessionScope.language : 'ru'}" scope="session"/>
+<fmt:bundle basename="pagecontent" prefix="profile.">
 <html>
 <head>
     <title>My Profile</title>
@@ -13,17 +17,17 @@
 <div id="mainContent">
 
     <div id="profile">
-        <h2> Профиль </h2>
+        <h2> <fmt:message key="profile"/> </h2>
         <div id="userInf">
-            <p>Логин: <b>${requestScope.user.name}</b></p>
-            <p>Возраст: ${requestScope.user.age}</p>
-            <p>email: ${requestScope.user.email}</p>
-            <p>Роль: ${requestScope.user.role}</p>
-            <p>Статус: ${requestScope.user.status}</p>
+            <p><fmt:message key="login"/>: <b>${requestScope.user.name}</b></p>
+            <p><fmt:message key="age"/>: ${requestScope.user.age}</p>
+            <p><fmt:message key="email"/>: ${requestScope.user.email}</p>
+            <p><fmt:message key="role"/>: ${requestScope.user.role}</p>
+            <p><fmt:message key="status"/>: ${requestScope.user.status}</p>
         </div>
     </div>
     <div id="reviews">
-        <h2> Мои отзывы </h2>
+        <h2> <fmt:message key="reviews"/>: </h2>
         <c:if test="${not empty requestScope.reviews}">
             <c:forEach var="film" items="${requestScope.films}">
                 <h3 class="filmName"> ${film.name} </h3>
@@ -38,3 +42,4 @@
 </body>
 <jsp:include page="constJsp/footer.jsp"/>
 </html>
+</fmt:bundle>

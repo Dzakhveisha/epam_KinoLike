@@ -6,6 +6,20 @@ body {
 #mainContent{
     min-height: 100%;
 }
+.localization{
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    padding: 0;
+}
+
+.localization li a{
+    margin: 10px;
+    color: #dddddd;
+}
+.localization li a:hover{
+    color: #D72323;
+}
 
 header, footer {
     background-color: #303841;
