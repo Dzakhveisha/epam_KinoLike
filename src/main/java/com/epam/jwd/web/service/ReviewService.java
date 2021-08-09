@@ -1,17 +1,12 @@
 package com.epam.jwd.web.service;
 
-import com.epam.jwd.web.dao.MovieDao;
 import com.epam.jwd.web.dao.ReviewDao;
-import com.epam.jwd.web.dao.impl.JdbcGenreDao;
-import com.epam.jwd.web.dao.impl.JdbcMovieDao;
-import com.epam.jwd.web.dao.impl.JdbcReviewDao;
+import com.epam.jwd.web.dao.DaoImpl.JdbcReviewDao;
 import com.epam.jwd.web.exception.UnknownEntityException;
-import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.model.Review;
 import com.epam.jwd.web.model.User;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ReviewService {

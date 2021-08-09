@@ -1,15 +1,13 @@
 package com.epam.jwd.web.service;
 
-import com.epam.jwd.web.dao.Dao;
 import com.epam.jwd.web.dao.MovieDao;
-import com.epam.jwd.web.dao.impl.JdbcGenreDao;
-import com.epam.jwd.web.dao.impl.JdbcMovieDao;
+import com.epam.jwd.web.dao.DaoImpl.JdbcGenreDao;
+import com.epam.jwd.web.dao.DaoImpl.JdbcMovieDao;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 public class FilmService {
 

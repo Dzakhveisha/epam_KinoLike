@@ -1,4 +1,4 @@
-package com.epam.jwd.web.dao.impl;
+package com.epam.jwd.web.dao.DaoImpl;
 
 import com.epam.jwd.web.dao.BaseDao;
 import com.epam.jwd.web.model.UserStatus;
@@ -34,7 +34,8 @@ public class JdbcUserStatusDao extends BaseDao<UserStatus> {
 
     @Override
     protected void prepareForUpdate(PreparedStatement statement, UserStatus entity) throws SQLException {
-
+        statement.setString(1, entity.name());
+        statement.setLong(2, entity.getId());
     }
 
     @Override

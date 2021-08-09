@@ -1,4 +1,4 @@
-package com.epam.jwd.web.dao.impl;
+package com.epam.jwd.web.dao.DaoImpl;
 
 import com.epam.jwd.web.dao.BaseDao;
 import com.epam.jwd.web.dao.SqlThrowingConsumer;

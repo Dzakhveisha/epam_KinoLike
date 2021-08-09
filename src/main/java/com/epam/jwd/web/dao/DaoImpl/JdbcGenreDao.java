@@ -1,4 +1,4 @@
-package com.epam.jwd.web.dao.impl;
+package com.epam.jwd.web.dao.DaoImpl;
 
 import com.epam.jwd.web.dao.BaseDao;
 import com.epam.jwd.web.model.FilmGenre;
@@ -35,7 +35,8 @@ public class JdbcGenreDao extends BaseDao<FilmGenre> {
 
     @Override
     protected void prepareForUpdate(PreparedStatement statement, FilmGenre entity) throws SQLException {
-
+        statement.setString(1, entity.name());
+        statement.setLong(2, entity.getId());
     }
 
     @Override

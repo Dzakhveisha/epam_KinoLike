@@ -1,4 +1,4 @@
-package com.epam.jwd.web.dao.impl;
+package com.epam.jwd.web.dao.DaoImpl;
 
 import com.epam.jwd.web.dao.BaseDao;
 import com.epam.jwd.web.dao.ReviewDao;
@@ -48,8 +48,15 @@ public class JdbcReviewDao extends BaseDao<Review> implements ReviewDao {
     }
 
     @Override
-    protected void prepareForUpdate(PreparedStatement statement, Review entity) throws SQLException {
+    protected String getFieldsNamesForUpdate() {
+        return String.format("%s = ?, %s = ? ", REVIEW_VALUE, REVIEW_TEXT);
+    }
 
+    @Override
+    protected void prepareForUpdate(PreparedStatement statement, Review entity) throws SQLException {
+        statement.setInt(1, entity.getValue());
+        statement.setString(2, entity.getText());
+        statement.setLong(3, entity.getId());
     }
 
     @Override
@@ -69,12 +76,6 @@ public class JdbcReviewDao extends BaseDao<Review> implements ReviewDao {
     @Override
     protected String getFieldsNames() {
         return String.format("%s, %s, %s, %s",
-                REVIEW_FILM_ID, REVIEW_USER_ID, REVIEW_VALUE, REVIEW_TEXT);
-    }
-
-    @Override
-    protected String getFieldsNamesForUpdate() {
-        return String.format("%s = ?, %s = ?, %s = ?, %s = ? ",
                 REVIEW_FILM_ID, REVIEW_USER_ID, REVIEW_VALUE, REVIEW_TEXT);
     }
 

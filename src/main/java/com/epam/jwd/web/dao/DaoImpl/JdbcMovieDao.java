@@ -1,4 +1,4 @@
-package com.epam.jwd.web.dao.impl;
+package com.epam.jwd.web.dao.DaoImpl;
 
 import com.epam.jwd.web.dao.BaseDao;
 import com.epam.jwd.web.dao.MovieDao;
@@ -23,6 +23,9 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
     private static final String MOVIE_RATING = "rating";
     private static final String MOVIE_GENRE_ID = "genreId";
     private static final String MOVIE_IMG_PATH = "imagePath";
+    
+    private static final String ORDER_BY_YEAR = " order by year desc";
+    private static final String ORDER_BY_RATING = " order by rating desc";
 
     private final String findByNameSql;
     private final String findByGenreSql;
@@ -62,12 +65,12 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
 
     @Override
     public List<Movie> findAllByNew() {
-        return this.findAllSort(" order by year desc");
+        return this.findAllSort(ORDER_BY_YEAR);
     }
 
     @Override
     public List<Movie> findAllByPopular() {
-        return this.findAllSort(" order by rating desc");
+        return this.findAllSort(ORDER_BY_RATING);
     }
 
     @Override
@@ -85,8 +88,7 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
     @Override
     protected String getValuesForSaving(Movie entity) {
         return String.format("('%s', %d, '%s', '%s', %d, %d, '%s')", entity.getName(), entity.getYear(),
-                entity.getDescription(), entity.getCountry(),
-                0, entity.getGenre().getId(), entity.getImagePath());
+                entity.getDescription(), entity.getCountry(), 0, entity.getGenre().getId(), entity.getImagePath());
     }
 
     @Override
