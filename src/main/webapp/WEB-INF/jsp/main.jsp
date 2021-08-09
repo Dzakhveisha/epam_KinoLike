@@ -35,7 +35,7 @@
                     <div class="textDescription">
                         <h2>${film.name}</h2>
                         <a href="${pageContext.request.contextPath}/controller?command=show_main&genre=${film.genre.name()}"><fmt:message key="${film.genre.name()}"/></a>
-                        <h3>${film.year}, <i> ${film.country} </i></h3>
+                        <h3>${film.year}, <i> ${film.countryName} </i></h3>
                         <p> ${film.description} </p>
                         <h4> ${film.rating} </h4>
                     </div>

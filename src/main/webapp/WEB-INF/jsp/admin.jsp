@@ -78,7 +78,7 @@
                         <input required type="number" max="2022" min="1895" id="fieldYear" name="year"
                                value="${film.year}"><br>
                         <label for="fieldCountry"> <fmt:message key="country"/> </label><br>
-                        <input required type="text" id="fieldCountry" name="country" value="${film.country}"><br>
+                        <input required type="text" id="fieldCountry" name="country" value="${film.countryName}"><br>
                         <label for="fieldDescript"> <fmt:message key="description"/> </label><br>
                         <textarea rows="15" cols="90" required id="fieldDescript" name="descript">${film.description}</textarea><br>
                         <label for="fieldGenre"> <fmt:message key="genre"/> </label><br>

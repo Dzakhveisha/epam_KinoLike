@@ -88,7 +88,7 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
     @Override
     protected String getValuesForSaving(Movie entity) {
         return String.format("('%s', %d, '%s', '%s', %d, %d, '%s')", entity.getName(), entity.getYear(),
-                entity.getDescription(), entity.getCountry(), 0, entity.getGenre().getId(), entity.getImagePath());
+                entity.getDescription(), entity.getCountryId(), 0, entity.getGenre().getId(), entity.getImagePath());
     }
 
     @Override
@@ -108,7 +108,7 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
         statement.setString(1, entity.getName());
         statement.setLong(2, entity.getYear());
         statement.setString(3, entity.getDescription());
-        statement.setLong(4, entity.getCountry());
+        statement.setLong(4, entity.getCountryId());
         statement.setFloat(5, entity.getRating());
         statement.setLong(6, entity.getGenre().getId());
         statement.setString(7, entity.getImagePath());

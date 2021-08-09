@@ -1,9 +1,8 @@
 package com.epam.jwd.web.command;
 
-import com.epam.jwd.web.model.FilmGenre;
-import com.epam.jwd.web.model.Movie;
-import com.epam.jwd.web.model.User;
-import com.epam.jwd.web.model.UserStatus;
+import com.epam.jwd.web.exception.UnknownEntityException;
+import com.epam.jwd.web.model.*;
+import com.epam.jwd.web.service.CountryService;
 import com.epam.jwd.web.service.FilmService;
 import com.epam.jwd.web.service.UserService;
 
@@ -31,10 +30,12 @@ public class ChangeFilmCommand implements Command {
     private static final String PARAMETER_GENRE = "genre";
     private final FilmService filmService;
     private final UserService userService;
+    private final CountryService countryService;
 
     public ChangeFilmCommand() {
         filmService = FilmService.getInstance();
         userService = UserService.getInstance();
+        countryService = CountryService.getInstance();
     }
 
     @Override
@@ -47,8 +48,16 @@ public class ChangeFilmCommand implements Command {
         String newName = new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         String newDescription = new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         Integer newYear = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
-        String newCountry = new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         FilmGenre newGenre = FilmGenre.valueOf(request.getParameter(PARAMETER_GENRE));
+
+        String countryName = new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        Country newCountry;
+        try{
+            newCountry = countryService.findByName(countryName);
+        }catch(UnknownEntityException e){
+            countryService.create(new Country(countryName));
+            newCountry = countryService.findByName(countryName);
+        }
 
         String uploadedName = request.getParameter("fileName");
         uploadedName = uploadedName.substring(uploadedName.lastIndexOf('\\') + 1);
@@ -60,7 +69,7 @@ public class ChangeFilmCommand implements Command {
         } catch (IOException e) {
             e.printStackTrace(); //todo
         }
-        filmService.update(new Movie(oldFilm.getId(), newName, newYear, newDescription, 1, oldFilm.getRating(),
+        filmService.update(new Movie(oldFilm.getId(), newName, newYear, newDescription, newCountry.getId(), oldFilm.getRating(),
                 newGenre.getId(), uploadedName));
 
         final HttpSession session = request.getCurrentSession().get();

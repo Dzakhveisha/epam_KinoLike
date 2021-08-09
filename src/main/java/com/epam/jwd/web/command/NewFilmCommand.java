@@ -1,7 +1,10 @@
 package com.epam.jwd.web.command;
 
+import com.epam.jwd.web.exception.UnknownEntityException;
+import com.epam.jwd.web.model.Country;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
+import com.epam.jwd.web.service.CountryService;
 import com.epam.jwd.web.service.FilmService;
 
 import javax.servlet.ServletContext;
@@ -22,9 +25,11 @@ public class NewFilmCommand implements Command {
     private static final String PARAMETER_COUNTRY = "country";
     private static final String PARAMETER_GENRE = "genre";
     private final FilmService filmService;
+    private final CountryService countryService;
 
     public NewFilmCommand() {
         filmService = FilmService.getInstance();
+        countryService = CountryService.getInstance();
     }
 
     @Override
@@ -32,10 +37,18 @@ public class NewFilmCommand implements Command {
         String name = new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         String description = new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         Integer year = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
-        String country = new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         FilmGenre genre = FilmGenre.valueOf(request.getParameter(PARAMETER_GENRE));
         String uploadedName = request.getParameter("fileName");
         uploadedName = uploadedName.substring(uploadedName.lastIndexOf('\\') + 1);
+
+        String countryName = new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        Country country;
+        try{
+            country = countryService.findByName(countryName);
+        }catch(UnknownEntityException e){
+            countryService.create(new Country(countryName));
+            country = countryService.findByName(countryName);
+        }
 
         Part filePart = request.getPart("image");
         try {
@@ -43,7 +56,7 @@ public class NewFilmCommand implements Command {
         } catch (IOException e) {
             e.printStackTrace(); //todo
         }
-        filmService.create(new Movie(name, year, description, 1, genre.getId(), uploadedName));
+        filmService.create(new Movie(name, year, description, country.getId(), genre.getId(), uploadedName));
         return new CommandResponse() {
             @Override
             public String getPath() {

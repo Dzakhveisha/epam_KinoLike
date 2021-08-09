@@ -1,11 +1,15 @@
 package com.epam.jwd.web.model;
 
 public class Country implements DbEntity {
-    private final long id;
+    private long id;
     private final String countryName;
 
     public Country(long id, String countryName) {
         this.id = id;
+        this.countryName = countryName;
+    }
+
+    public Country(String countryName) {
         this.countryName = countryName;
     }
 
