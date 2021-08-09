@@ -13,6 +13,7 @@ import com.epam.jwd.web.service.ReviewService;
 import com.epam.jwd.web.service.UserService;
 
 import javax.servlet.http.HttpSession;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ public class ShowMainPageCommand implements Command {
     public static final String GENRE_PARAMETER = "genre";
     public static final String SORT_TYPE_NEW = "new";
     public static final String SORT_TYPE_POPULAR = "popular";
+    public static final String SORT_TYPE_SEARCH = "search";
 
     private final FilmService filmService;
     private final ReviewService reviewService;
@@ -69,6 +71,10 @@ public class ShowMainPageCommand implements Command {
                     break;
                 case SORT_TYPE_POPULAR:
                     films = filmService.findAllPopular();
+                    break;
+                case SORT_TYPE_SEARCH:
+                    String searchStr = new String(request.getParameter("search").getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
+                    films = filmService.findAllByString(searchStr);
                     break;
             }
         } else {
