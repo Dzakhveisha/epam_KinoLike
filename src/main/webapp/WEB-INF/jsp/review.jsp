@@ -25,7 +25,7 @@
     <form class="enterForm" action="${pageContext.request.contextPath}/controller?command=review&film=${film}"
           method="post">
         <label for="fieldValue"> <fmt:message key="rating"/> </label><br>
-        <input required type="number" max="10" id="fieldValue" name="value"><br>
+        <input required type="number" min="0" max="10" id="fieldValue" name="value"><br>
         <label for="fieldText"> <fmt:message key="comment"/> </label><br>
         <textarea id="fieldText" rows="10" cols="45" name="text"></textarea><br>
         <input type="submit" value="OK">

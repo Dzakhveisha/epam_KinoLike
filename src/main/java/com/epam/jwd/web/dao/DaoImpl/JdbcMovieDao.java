@@ -29,6 +29,7 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
 
     private final String findByNameSql;
     private final String findByGenreSql;
+    private final String findByStringSql;
 
     private static JdbcMovieDao instance;
 
@@ -50,6 +51,7 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
         super(MOVIE_TABLE_NAME);
         this.findByNameSql = String.format(FIND_BY_PARAM_SQL_TEMPLATE, MOVIE_TABLE_NAME, MOVIE_NAME);
         this.findByGenreSql = String.format(FIND_BY_PARAM_SQL_TEMPLATE, MOVIE_TABLE_NAME, MOVIE_GENRE_ID);
+        this.findByStringSql = "SELECT * FROM movie WHERE movie.m_name LIKE '%%%s%%'";
     }
 
     @Override
@@ -61,6 +63,11 @@ public class JdbcMovieDao extends BaseDao<Movie> implements MovieDao {
     @Override
     public List<Movie> findMoviesByGenre(FilmGenre genre) {
         return findPreparedEntities(whereGenre(genre.getId()), findByGenreSql);
+    }
+
+    @Override
+    public List<Movie> findAllByString(String searchStr) {
+        return findEntities(String.format(findByStringSql, searchStr));
     }
 
     @Override

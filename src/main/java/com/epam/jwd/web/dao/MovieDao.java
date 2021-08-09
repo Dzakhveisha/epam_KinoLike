@@ -15,4 +15,6 @@ public interface MovieDao extends Dao<Movie>{
     List<Movie> findAllByNew();
 
     List<Movie> findAllByPopular();
+
+    List<Movie> findAllByString(String searchStr);
 }

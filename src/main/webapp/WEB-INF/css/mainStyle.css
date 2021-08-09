@@ -26,6 +26,13 @@ header, footer {
     position: relative;
     width: 100%;
 }
+header form{
+     display: flex;
+     align-items: center;
+ }
+header form button{
+    border-radius: 5px;
+}
 
 .logo, .logo2 {
     width: 70px;

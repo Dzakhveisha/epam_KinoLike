@@ -79,5 +79,9 @@ public class FilmService {
     public Movie update(Movie movie){
         return movieDao.update(movie);
     }
+
+    public List<Movie> findAllByString(String searchStr) {
+        return movieDao.findAllByString(searchStr);
+    }
 }
 
