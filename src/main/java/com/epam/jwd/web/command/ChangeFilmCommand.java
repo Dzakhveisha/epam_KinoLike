@@ -46,15 +46,15 @@ public class ChangeFilmCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
 
-        String filmName = new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        String filmName = replaceScripts(new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         Movie oldFilm = filmService.findByName(filmName);
 
-        String newName = new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        String newDescription = new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        String newName = replaceScripts(new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        String newDescription = replaceScripts(new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         int newYear = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
         FilmGenre newGenre = FilmGenre.valueOf(request.getParameter(PARAMETER_GENRE));
 
-        String countryName = new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        String countryName =replaceScripts(new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         Country newCountry;
         try{
             newCountry = countryService.findByName(countryName);
@@ -111,5 +111,11 @@ public class ChangeFilmCommand implements Command {
         }
         in.close();
         out.close();
+    }
+
+    private String replaceScripts(String string){
+        string = string.replaceAll("<","&lt");
+        string = string.replaceAll(">","&gt");
+        return string;
     }
 }

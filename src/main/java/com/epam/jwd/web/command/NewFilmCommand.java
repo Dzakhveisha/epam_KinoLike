@@ -35,14 +35,15 @@ public class NewFilmCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String name = new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        String description = new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        String name = replaceScripts(new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        String description = replaceScripts(new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+
         Integer year = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
         FilmGenre genre = FilmGenre.valueOf(request.getParameter(PARAMETER_GENRE));
         String uploadedName = request.getParameter(FILE_NAME_PARAMETER);
         uploadedName = uploadedName.substring(uploadedName.lastIndexOf('\\') + 1);
 
-        String countryName = new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        String countryName =replaceScripts(new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         Country country;
         try{
             country = countryService.findByName(countryName);
@@ -80,5 +81,11 @@ public class NewFilmCommand implements Command {
         }
         in.close();
         out.close();
+    }
+
+    private String replaceScripts(String string){
+        string = string.replaceAll("<","&lt");
+        string = string.replaceAll(">","&gt");
+        return string;
     }
 }

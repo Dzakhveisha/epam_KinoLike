@@ -4,6 +4,7 @@ import com.epam.jwd.web.model.User;
 import com.epam.jwd.web.service.UserService;
 
 import javax.servlet.http.HttpSession;
+import java.nio.charset.StandardCharsets;
 
 public class LoginCommand implements Command {
 
@@ -22,8 +23,8 @@ public class LoginCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String password = request.getParameter(PASSWORD_PARAM);
-        String login = request.getParameter(LOGIN_PARAM);
+        String password = replaceScripts(new String(request.getParameter(PASSWORD_PARAM).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        String login = replaceScripts(new String(request.getParameter(LOGIN_PARAM).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         User logUser = new User(login, password);
         if (userService.canLogIn(logUser)) {
             request.getCurrentSession().ifPresent(HttpSession::invalidate);
@@ -37,5 +38,11 @@ public class LoginCommand implements Command {
             return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
 
         }
+    }
+
+    private String replaceScripts(String string) {
+        string = string.replaceAll("<", "&lt");
+        string = string.replaceAll(">", "&gt");
+        return string;
     }
 }

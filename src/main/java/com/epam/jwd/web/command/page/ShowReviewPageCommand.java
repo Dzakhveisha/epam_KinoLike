@@ -15,7 +15,8 @@ public class ShowReviewPageCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        final String film = new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        final String film = new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8)
+                .replaceAll("<","&lt").replaceAll(">","&gt");
         request.setAttribute(FILM_ATTRIBUTE, film);
         return new SimpleCommandResponse("/WEB-INF/jsp/review.jsp", false);
     }

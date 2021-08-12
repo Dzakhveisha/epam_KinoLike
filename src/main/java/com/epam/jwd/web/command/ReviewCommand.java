@@ -31,9 +31,9 @@ public class ReviewCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String text = new String(request.getParameter(TEXT_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        String text = replaceScripts(new String(request.getParameter(TEXT_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         Integer value = Integer.valueOf(request.getParameter(VALUE_PARAMETER));
-        final String filmName = new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        final String filmName = replaceScripts(new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
 
         final HttpSession session = request.getCurrentSession().get();
         String name = (String) session.getAttribute(USER_ATTRIBUTE);
@@ -56,6 +56,12 @@ public class ReviewCommand implements Command {
         }
         request.setAttribute(ERROR_ATTRIBUTE, REVIEW_IS_EXIST_MSG);
         return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
+    }
+
+    private String replaceScripts(String string) {
+        string = string.replaceAll("<", "&lt");
+        string = string.replaceAll(">", "&gt");
+        return string;
     }
 }
 
