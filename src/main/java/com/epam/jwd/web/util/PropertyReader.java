@@ -31,7 +31,8 @@ public class PropertyReader {
     }
 
     private void LoadAllProperties() {
-        try (InputStream propertiesStream = getClass().getClassLoader().getResourceAsStream(PROPERTY_FILE_NAME)) {
+        try (InputStream propertiesStream = getClass().getClassLoader()
+                .getResourceAsStream(PROPERTY_FILE_NAME)) {
             properties = new Properties();
             properties.load(propertiesStream);
         } catch (IOException e) {
