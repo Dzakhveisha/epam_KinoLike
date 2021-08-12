@@ -28,6 +28,11 @@ public class ChangeFilmCommand implements Command {
     private static final String PARAMETER_DESCRIPTION = "descript";
     private static final String PARAMETER_COUNTRY = "country";
     private static final String PARAMETER_GENRE = "genre";
+    private static final String FILM_PARAMETER = "film";
+    private static final String FILE_NAME_PARAMETER = "fileName";
+    private static final String USER_ATTRIBUTE = "user";
+    private static final String PART_NAME = "image";
+
     private final FilmService filmService;
     private final UserService userService;
     private final CountryService countryService;
@@ -41,13 +46,12 @@ public class ChangeFilmCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
 
-        String filmName = new String(request.getParameter("film").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-
+        String filmName = new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         Movie oldFilm = filmService.findByName(filmName);
 
         String newName = new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         String newDescription = new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        Integer newYear = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
+        int newYear = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
         FilmGenre newGenre = FilmGenre.valueOf(request.getParameter(PARAMETER_GENRE));
 
         String countryName = new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
@@ -59,21 +63,22 @@ public class ChangeFilmCommand implements Command {
             newCountry = countryService.findByName(countryName);
         }
 
-        String uploadedName = request.getParameter("fileName");
+        String uploadedName = request.getParameter(FILE_NAME_PARAMETER);
         uploadedName = uploadedName.substring(uploadedName.lastIndexOf('\\') + 1);
 
-        Part filePart = request.getPart("image");
+        Part filePart = request.getPart(PART_NAME);
         try {
             if (filePart.getSize() != 0)
             updateImage(request.getReq(),filePart, uploadedName);
         } catch (IOException e) {
-            e.printStackTrace(); //todo
+            uploadedName = oldFilm.getImagePath();
+            //TODO
         }
         filmService.update(new Movie(oldFilm.getId(), newName, newYear, newDescription, newCountry.getId(), oldFilm.getRating(),
                 newGenre.getId(), uploadedName));
 
         final HttpSession session = request.getCurrentSession().get();
-        String curUserName = (String) session.getAttribute("user");
+        String curUserName = (String) session.getAttribute(USER_ATTRIBUTE);
         User curUser = userService.findByLogin(curUserName);
         List<Movie> films = filmService.findAll();
         List<User> users = userService.findAll();
@@ -85,18 +90,9 @@ public class ChangeFilmCommand implements Command {
         request.setAttribute(FILMS_ATTRIBUTE, films);
         request.setAttribute(USERS_ATTRIBUTE, users);
         request.setAttribute(ADMIN_ATTRIBUTE, curUser);
-        return new CommandResponse() {
-            @Override
-            public String getPath() {
-                return "/WEB-INF/jsp/admin.jsp";
-            }
-
-            @Override
-            public boolean isRedirect() {
-                return false;
-            }
-        };
+        return new SimpleCommandResponse("/KinoLike/controller?command=show_admin",true);
     }
+
     private void updateImage(HttpServletRequest request, Part part, String uploadedName) throws IOException {
         ServletContext servletContext = request.getServletContext();
         String uploadDirectory = servletContext.getInitParameter("IMAGE_UPLOAD_PATH");

@@ -3,6 +3,7 @@ package com.epam.jwd.web.command.page;
 import com.epam.jwd.web.command.Command;
 import com.epam.jwd.web.command.CommandRequest;
 import com.epam.jwd.web.command.CommandResponse;
+import com.epam.jwd.web.command.SimpleCommandResponse;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.service.FilmService;
 
@@ -20,16 +21,7 @@ public class ShowNewFilmPageCommand implements Command {
     public CommandResponse execute(CommandRequest request) {
         List<FilmGenre> genres = FILM_SERVICE.findAllGenres();
         request.setAttribute(GENRES_ATTRIBUTE, genres);
-        return new CommandResponse() {
-            @Override
-            public String getPath() {
-                return "/WEB-INF/jsp/newFilm.jsp";
-            }
+        return new SimpleCommandResponse("/WEB-INF/jsp/newFilm.jsp", false);
 
-            @Override
-            public boolean isRedirect() {
-                return false;
-            }
-        };
     }
 }

@@ -13,6 +13,10 @@ import java.nio.charset.StandardCharsets;
 
 public class ReviewCommand implements Command {
 
+    private static final String TEXT_PARAMETER = "text";
+    private static final String VALUE_PARAMETER = "value";
+    private static final String FILM_PARAMETER = "film";
+    private static final String USER_ATTRIBUTE = "user";
     private final FilmService filmService;
     private final UserService userService;
     private final ReviewService reviewService;
@@ -25,44 +29,31 @@ public class ReviewCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String text = new String(request.getParameter("text").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
-        Integer value = Integer.valueOf(request.getParameter("value"));
-        final String filmName = new String(request.getParameter("film").getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        String text = new String(request.getParameter(TEXT_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+        Integer value = Integer.valueOf(request.getParameter(VALUE_PARAMETER));
+        final String filmName = new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
 
         final HttpSession session = request.getCurrentSession().get();
-        String name = (String) session.getAttribute("user");
-
+        String name = (String) session.getAttribute(USER_ATTRIBUTE);
         User user = userService.findByLogin(name);
-        Movie movie = filmService.findByName(filmName);
+        Movie movie;
+
+        try {
+            movie = filmService.findByName(filmName);
+        }catch (UnknownEntityException e){
+            //todo log
+            request.setAttribute("error", "Нет такого фильма!!");
+            return new SimpleCommandResponse("/WEB-INF/jsp/review.jsp", false);
+        }
 
         try {
             reviewService.findBy(movie, user);
         } catch (UnknownEntityException e){
             reviewService.create(new Review(user.getId(), movie.getId(), value, text));
-            return new CommandResponse() {
-                @Override
-                public String getPath() {
-                    return "/KinoLike/index.jsp";
-                }
-
-                @Override
-                public boolean isRedirect() {
-                    return true;
-                }
-            };
+            return new SimpleCommandResponse("/KinoLike/index.jsp", true);
         }
         request.setAttribute("error", "Вы уже оставили отзыв на этот фильм!!");
-        return new CommandResponse() {
-            @Override
-            public String getPath() {
-                return "/WEB-INF/jsp/review.jsp";
-            }
-
-            @Override
-            public boolean isRedirect() {
-                return false;
-            }
-        };
+        return new SimpleCommandResponse("/WEB-INF/jsp/review.jsp", false);
     }
 }
 

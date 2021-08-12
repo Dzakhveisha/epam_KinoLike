@@ -3,6 +3,7 @@ package com.epam.jwd.web.command.page;
 import com.epam.jwd.web.command.Command;
 import com.epam.jwd.web.command.CommandRequest;
 import com.epam.jwd.web.command.CommandResponse;
+import com.epam.jwd.web.command.SimpleCommandResponse;
 import com.epam.jwd.web.model.*;
 import com.epam.jwd.web.service.FilmService;
 import com.epam.jwd.web.service.ReviewService;
@@ -30,7 +31,7 @@ public class ShowProfilePageCommand implements Command {
     @Override
     public CommandResponse execute(CommandRequest request) {
         final HttpSession session = request.getCurrentSession().get();
-        String name = (String) session.getAttribute("user");
+        String name = (String) session.getAttribute(USER_ATTRIBUTE);
         User curUser = userService.findByLogin(name);
         request.setAttribute(USER_ATTRIBUTE, curUser);
 
@@ -46,16 +47,7 @@ public class ShowProfilePageCommand implements Command {
         request.setAttribute(REVIEWS_ATTRIBUTE, reviewMovieMap);
         request.setAttribute(FILMS_ATTRIBUTE, films);
 
-        return new CommandResponse() {
-            @Override
-            public String getPath() {
-                return "/WEB-INF/jsp/profile.jsp";
-            }
+        return new SimpleCommandResponse("/WEB-INF/jsp/profile.jsp", false);
 
-            @Override
-            public boolean isRedirect() {
-                return false;
-            }
-        };
     }
 }

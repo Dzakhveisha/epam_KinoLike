@@ -16,6 +16,8 @@ public class ChangeStatusCommand implements Command{
     private static final String ADMIN_ATTRIBUTE = "admin";
     private static final String STATUSES_ATTRIBUTE = "statuses";
     private static final String GENRES_ATTRIBUTE = "genres";
+    private static final String USER_ATTRIBUTE = "user";
+    private static final String STATUS_PARAMETER = "status";
     private final FilmService filmService;
     private final UserService userService;
 
@@ -26,14 +28,14 @@ public class ChangeStatusCommand implements Command{
     @Override
     public CommandResponse execute(CommandRequest request) {
 
-        String userName = request.getParameter("user");
+        String userName = request.getParameter(USER_ATTRIBUTE);
         User user = userService.findByLogin(userName);
-        UserStatus newStatus = UserStatus.valueOf(request.getParameter("status"));
+        UserStatus newStatus = UserStatus.valueOf(request.getParameter(STATUS_PARAMETER));
         userService.update(new User(user.getId(), user.getName(), user.getAge(),
                 user.getRole().getId(), user.getEmail(), user.getPasswordHash(), newStatus.getId()));
 
         final HttpSession session = request.getCurrentSession().get();
-        String curUserName = (String) session.getAttribute("user");
+        String curUserName = (String) session.getAttribute(USER_ATTRIBUTE);
         User curUser = userService.findByLogin(curUserName);
         List<Movie> films = filmService.findAll();
         List<User> users = userService.findAll();
@@ -45,16 +47,7 @@ public class ChangeStatusCommand implements Command{
         request.setAttribute(FILMS_ATTRIBUTE, films);
         request.setAttribute(USERS_ATTRIBUTE, users);
         request.setAttribute(ADMIN_ATTRIBUTE, curUser);
-        return new CommandResponse() {
-            @Override
-            public String getPath() {
-                return "/WEB-INF/jsp/admin.jsp";
-            }
 
-            @Override
-            public boolean isRedirect() {
-                return false;
-            }
-        };
+        return new SimpleCommandResponse("/KinoLike/controller?command=show_admin",true);
     }
 }

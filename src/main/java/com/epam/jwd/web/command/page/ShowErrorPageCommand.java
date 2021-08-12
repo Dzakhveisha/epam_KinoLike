@@ -5,10 +5,10 @@ import com.epam.jwd.web.command.CommandRequest;
 import com.epam.jwd.web.command.CommandResponse;
 import com.epam.jwd.web.command.SimpleCommandResponse;
 
-public class ShowLoginPageCommand implements Command {
+public class ShowErrorPageCommand implements Command {
+
     @Override
     public CommandResponse execute(CommandRequest request) {
-        return new SimpleCommandResponse("/WEB-INF/jsp/login.jsp", false);
-
+        return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
     }
 }

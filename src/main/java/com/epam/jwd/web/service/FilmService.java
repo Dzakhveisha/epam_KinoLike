@@ -3,6 +3,7 @@ package com.epam.jwd.web.service;
 import com.epam.jwd.web.dao.MovieDao;
 import com.epam.jwd.web.dao.DaoImpl.JdbcGenreDao;
 import com.epam.jwd.web.dao.DaoImpl.JdbcMovieDao;
+import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
 
@@ -10,6 +11,10 @@ import java.util.Collections;
 import java.util.List;
 
 public class FilmService {
+
+    private static final String NOT_FOUND_WITH_NAME_MSG = "Film with such name does not exist!";
+    private static final String NOT_FOUND_WITH_ID_MSG = "Film with such id does not exist!";
+
 
     private static FilmService instance;
     private final MovieDao movieDao;
@@ -46,9 +51,6 @@ public class FilmService {
         return movieDao.findAllByPopular();
     }
 
-    public List<Movie> findLikedFilms() {
-        return Collections.emptyList(); //todo
-    }
 
     public List<FilmGenre> findAllGenres(){
         return JdbcGenreDao.getInstance().findAll();
@@ -59,11 +61,11 @@ public class FilmService {
     }
 
     public Movie findByName(String name){
-        return movieDao.findMovieByName(name).orElse(null);
+        return movieDao.findMovieByName(name).orElseThrow(() -> new UnknownEntityException(NOT_FOUND_WITH_NAME_MSG));
     }
 
     public Movie findById(Long id){
-        return movieDao.findById(id).orElse(null);
+        return movieDao.findById(id).orElseThrow(() -> new UnknownEntityException(NOT_FOUND_WITH_ID_MSG));
     }
 
 
@@ -72,8 +74,12 @@ public class FilmService {
     }
 
     public void deleteByName(String name){
-        Movie movie = findByName(name);
-        movieDao.delete(movie.getId());
+        try {
+            Movie movie = findByName(name);
+            movieDao.delete(movie.getId());
+        }catch (UnknownEntityException E) {
+            //TODO LOG
+        }
     }
 
     public Movie update(Movie movie){

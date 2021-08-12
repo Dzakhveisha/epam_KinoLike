@@ -7,6 +7,10 @@ import com.epam.jwd.web.service.UserService;
 
 public class RegisterCommand implements Command {
 
+    private static final String PASSWORD_PARAMETER = "password";
+    private static final String MAIL_PARAMETER = "mail";
+    private static final String AGE_PARAMETER = "age";
+    private static final String LOGIN_PARAMETER = "login";
     private final UserService userService;
 
     public RegisterCommand() {
@@ -15,38 +19,18 @@ public class RegisterCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String password = request.getParameter("password");
-        String mail = request.getParameter("mail");
-        Integer age = Integer.valueOf(request.getParameter("age"));
-        String login = request.getParameter("login");
+        String password = request.getParameter(PASSWORD_PARAMETER);
+        String mail = request.getParameter(MAIL_PARAMETER);
+        Integer age = Integer.valueOf(request.getParameter(AGE_PARAMETER));
+        String login = request.getParameter(LOGIN_PARAMETER);
 
         User newUser = new User(login, password, mail, age);
         if (userService.canRegister(newUser)){
             userService.create(newUser);
-            return new CommandResponse() {
-                @Override
-                public String getPath() {
-                    return "/KinoLike/index.jsp";
-                }
-
-                @Override
-                public boolean isRedirect() {
-                    return true;
-                }
-            };
+            return new SimpleCommandResponse("/KinoLike/index.jsp", true);
         } else {
             request.setAttribute("error", "This login is already exist!!");
-            return new CommandResponse() {
-                @Override
-                public String getPath() {
-                    return "/WEB-INF/jsp/register.jsp";
-                }
-
-                @Override
-                public boolean isRedirect() {
-                    return false;
-                }
-            };
+            return new SimpleCommandResponse("/WEB-INF/jsp/register.jsp", false);
         }
     }
 }

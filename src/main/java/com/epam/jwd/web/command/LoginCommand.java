@@ -11,6 +11,8 @@ public class LoginCommand implements Command {
     private static final String LOGIN_PARAM = "login";
     private static final String USER_SESSION_ATTRIBUTE = "user";
     private static final String USER_ROLE_SESSION_ATTRIBUTE = "role";
+    private static final String CAN_NOT_LOGIN_MSG = "Wrong login or password!";
+    private static final String ERROR_ATTRIBUTE = "error";
 
     private final UserService userService;
 
@@ -28,30 +30,12 @@ public class LoginCommand implements Command {
             final HttpSession session = request.createSession();
             session.setAttribute(USER_SESSION_ATTRIBUTE, login);
             session.setAttribute(USER_ROLE_SESSION_ATTRIBUTE, userService.findByLogin(login).getRole());
-            return new CommandResponse() {
-                @Override
-                public String getPath() {
-                    return "/KinoLike/index.jsp";
-                }
+            return new SimpleCommandResponse("/KinoLike/index.jsp", true);
 
-                @Override
-                public boolean isRedirect() {
-                    return true;
-                }
-            };
         } else {
-            request.setAttribute("error", "Wrong login or password!");
-            return new CommandResponse() {
-                @Override
-                public String getPath() {
-                    return "/WEB-INF/jsp/login.jsp";
-                }
+            request.setAttribute(ERROR_ATTRIBUTE, CAN_NOT_LOGIN_MSG);
+            return new SimpleCommandResponse("/WEB-INF/jsp/login.jsp",false);
 
-                @Override
-                public boolean isRedirect() {
-                    return false;
-                }
-            };
         }
     }
 }

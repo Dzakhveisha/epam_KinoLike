@@ -32,16 +32,14 @@
                         <form action="${pageContext.request.contextPath}/controller?command=change_status&user=${user.name}"
                               method="post">
                             <fmt:message key="status"/>
-                            <fmt:bundle basename="pagecontent" prefix="status.">
                             <select required name="status">
                                     <c:if test="${not empty requestScope.statuses}">
                                         <c:forEach var="status" items="${requestScope.statuses}">
-                                            <option><fmt:message key="${status}"/></option>
+                                            <option>${status}</option>
                                         </c:forEach>
                                     </c:if>
-                                <option selected="selected"><fmt:message key="${user.status}"/></option>
+                                <option selected="selected">${user.status}</option>
                             </select>
-                            </fmt:bundle>
                             <input class="btnApply" type="submit" value="<fmt:message key="changeStatus"/>">
                         </form>
                     </div>
@@ -92,14 +90,12 @@
                                       name="descript">${film.description}</textarea><br>
                             <label for="fieldGenre"> <fmt:message key="genre"/> </label><br>
                             <select id="fieldGenre" name="genre">
-                                <fmt:bundle basename="pagecontent" prefix="genre.">
                                     <c:if test="${not empty requestScope.genres}">
                                         <c:forEach var="genre" items="${requestScope.genres}">
-                                            <option><fmt:message key="${genre.name()}"/></option>
+                                            <option>${genre.name()}</option>
                                         </c:forEach>
                                     </c:if>
-                                    <option selected="selected"><fmt:message key="${film.genre.name()}"/></option>
-                                </fmt:bundle>
+                                    <option selected="selected">${film.genre.name()}</option>
                             </select><br>
                             <br><input class="btnApply" type="submit" value="<fmt:message key="save"/>">
                         </form>

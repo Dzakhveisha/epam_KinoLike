@@ -3,6 +3,7 @@ package com.epam.jwd.web.command.page;
 import com.epam.jwd.web.command.Command;
 import com.epam.jwd.web.command.CommandRequest;
 import com.epam.jwd.web.command.CommandResponse;
+import com.epam.jwd.web.command.SimpleCommandResponse;
 import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
@@ -14,10 +15,7 @@ import com.epam.jwd.web.service.UserService;
 
 import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ShowMainPageCommand implements Command {
 
@@ -29,6 +27,8 @@ public class ShowMainPageCommand implements Command {
     public static final String SORT_TYPE_NEW = "new";
     public static final String SORT_TYPE_POPULAR = "popular";
     public static final String SORT_TYPE_SEARCH = "search";
+    private static final String SEARCH_PARAMETER = "search";
+    private static final String USER_ATTRIBUTE = "user";
 
     private final FilmService filmService;
     private final ReviewService reviewService;
@@ -48,17 +48,7 @@ public class ShowMainPageCommand implements Command {
         request.setAttribute(FILMS_ATTRIBUTE, films);
         request.setAttribute(HAVE_REVIEWS_ATTRIBUTE, getFilmsAndReviewsMap(request, films));
 
-        return new CommandResponse() {
-            @Override
-            public String getPath() {
-                return "/WEB-INF/jsp/main.jsp";
-            }
-
-            @Override
-            public boolean isRedirect() {
-                return false;
-            }
-        };
+        return new SimpleCommandResponse("/WEB-INF/jsp/main.jsp", false);
     }
 
     private List<Movie> getFilms(CommandRequest request) {
@@ -73,23 +63,31 @@ public class ShowMainPageCommand implements Command {
                     films = filmService.findAllPopular();
                     break;
                 case SORT_TYPE_SEARCH:
-                    String searchStr = new String(request.getParameter("search").getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
+                    String searchStr = new String(request.getParameter(SEARCH_PARAMETER).getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
                     films = filmService.findAllByString(searchStr);
                     break;
+                default:
+                    films = Collections.emptyList();
             }
         } else {
             films = filmService.findAll();
         }
         String genreName = request.getParameter(GENRE_PARAMETER);
         if (genreName != null) {
-            films = filmService.finAllByGenre(FilmGenre.valueOf(genreName));
+            try {
+                FilmGenre genre = FilmGenre.valueOf(genreName);
+                films = filmService.finAllByGenre(genre);
+            }catch (IllegalArgumentException e){
+                films = Collections.emptyList();
+            }
         }
         return films;
     }
+
     private Map<Long, Review> getFilmsAndReviewsMap(CommandRequest request, List<Movie> films){
         Map<Long, Review> filmMap = new HashMap<>();
         final HttpSession session = request.getCurrentSession().get();
-        String name = (String) session.getAttribute("user");
+        String name = (String) session.getAttribute(USER_ATTRIBUTE);
         if (name != null) {
             User curUser = userService.findByLogin(name);
 

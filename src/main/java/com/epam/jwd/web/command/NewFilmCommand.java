@@ -14,7 +14,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 
 
 public class NewFilmCommand implements Command {
@@ -24,6 +23,8 @@ public class NewFilmCommand implements Command {
     private static final String PARAMETER_DESCRIPTION = "descript";
     private static final String PARAMETER_COUNTRY = "country";
     private static final String PARAMETER_GENRE = "genre";
+    private static final String FILE_NAME_PARAMETER = "fileName";
+    private static final String PART_NAME = "image";
     private final FilmService filmService;
     private final CountryService countryService;
 
@@ -38,7 +39,7 @@ public class NewFilmCommand implements Command {
         String description = new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         Integer year = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
         FilmGenre genre = FilmGenre.valueOf(request.getParameter(PARAMETER_GENRE));
-        String uploadedName = request.getParameter("fileName");
+        String uploadedName = request.getParameter(FILE_NAME_PARAMETER);
         uploadedName = uploadedName.substring(uploadedName.lastIndexOf('\\') + 1);
 
         String countryName = new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
@@ -50,24 +51,15 @@ public class NewFilmCommand implements Command {
             country = countryService.findByName(countryName);
         }
 
-        Part filePart = request.getPart("image");
+        Part filePart = request.getPart(PART_NAME);
         try {
             updateImage(request.getReq(),filePart, uploadedName);
         } catch (IOException e) {
-            e.printStackTrace(); //todo
+            e.printStackTrace();
+            //todo
         }
         filmService.create(new Movie(name, year, description, country.getId(), genre.getId(), uploadedName));
-        return new CommandResponse() {
-            @Override
-            public String getPath() {
-                return "/KinoLike/index.jsp";
-            }
-
-            @Override
-            public boolean isRedirect() {
-                return true;
-            }
-        };
+        return new SimpleCommandResponse("/KinoLike/index.jsp",true);
     }
 
     private void updateImage(HttpServletRequest request, Part part, String uploadedName) throws IOException {

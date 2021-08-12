@@ -3,6 +3,7 @@ package com.epam.jwd.web.command;
 import com.epam.jwd.web.command.Command;
 import com.epam.jwd.web.command.CommandRequest;
 import com.epam.jwd.web.command.CommandResponse;
+import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.model.User;
@@ -23,6 +24,8 @@ public class DeleteFilmCommand implements Command {
     private static final String ADMIN_ATTRIBUTE = "admin";
     private static final String STATUSES_ATTRIBUTE = "statuses";
     private static final String GENRES_ATTRIBUTE = "genres";
+    private static final String USER_ATTRIBUTE = "user";
+    private static final String FILM_PARAMETER = "film";
     private final FilmService filmService;
     private final UserService userService;
 
@@ -33,12 +36,19 @@ public class DeleteFilmCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String name = new String(request.getParameter("film").getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
-        deleteImage(request.getReq(), filmService.findByName(name).getImagePath());
-        filmService.deleteByName(name);
+        String name = new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
+        try {
+            deleteImage(request.getReq(), filmService.findByName(name).getImagePath());
+            filmService.deleteByName(name);
+        }
+        catch (UnknownEntityException e){
+            //todo log
+            //todo error page
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+        }
 
         final HttpSession session = request.getCurrentSession().get();
-        String userName = (String) session.getAttribute("user");
+        String userName = (String) session.getAttribute(USER_ATTRIBUTE);
         User curUser = userService.findByLogin(userName);
         List<Movie> films = filmService.findAll();
         List<User> users = userService.findAll();
@@ -50,17 +60,7 @@ public class DeleteFilmCommand implements Command {
         request.setAttribute(FILMS_ATTRIBUTE, films);
         request.setAttribute(USERS_ATTRIBUTE, users);
         request.setAttribute(ADMIN_ATTRIBUTE, curUser);
-        return new CommandResponse() {
-            @Override
-            public String getPath() {
-                return "/WEB-INF/jsp/admin.jsp";
-            }
-
-            @Override
-            public boolean isRedirect() {
-                return false;
-            }
-        };
+        return new SimpleCommandResponse("/WEB-INF/jsp/admin.jsp",false);
     }
 
     private void deleteImage(HttpServletRequest request, String imagePath) {
