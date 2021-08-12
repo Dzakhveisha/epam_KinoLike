@@ -34,7 +34,7 @@ public class LoginCommand implements Command {
 
         } else {
             request.setAttribute(ERROR_ATTRIBUTE, CAN_NOT_LOGIN_MSG);
-            return new SimpleCommandResponse("/WEB-INF/jsp/login.jsp",false);
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
 
         }
     }

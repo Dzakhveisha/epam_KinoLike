@@ -11,6 +11,8 @@ public class RegisterCommand implements Command {
     private static final String MAIL_PARAMETER = "mail";
     private static final String AGE_PARAMETER = "age";
     private static final String LOGIN_PARAMETER = "login";
+    private static final Object LOGIN_IS_EXIST_MSG = "This login is already exist!!";
+    private static final String ERROR_ATTRIBUTE = "error";
     private final UserService userService;
 
     public RegisterCommand() {
@@ -29,8 +31,8 @@ public class RegisterCommand implements Command {
             userService.create(newUser);
             return new SimpleCommandResponse("/KinoLike/index.jsp", true);
         } else {
-            request.setAttribute("error", "This login is already exist!!");
-            return new SimpleCommandResponse("/WEB-INF/jsp/register.jsp", false);
+            request.setAttribute(ERROR_ATTRIBUTE, LOGIN_IS_EXIST_MSG);
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
         }
     }
 }

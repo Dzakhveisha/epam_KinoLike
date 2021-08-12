@@ -17,6 +17,8 @@ public class ReviewCommand implements Command {
     private static final String VALUE_PARAMETER = "value";
     private static final String FILM_PARAMETER = "film";
     private static final String USER_ATTRIBUTE = "user";
+    private static final String ERROR_ATTRIBUTE = "error";
+    private static final Object REVIEW_IS_EXIST_MSG = "Вы уже оставили отзыв на этот фильм!!";
     private final FilmService filmService;
     private final UserService userService;
     private final ReviewService reviewService;
@@ -42,8 +44,8 @@ public class ReviewCommand implements Command {
             movie = filmService.findByName(filmName);
         }catch (UnknownEntityException e){
             //todo log
-            request.setAttribute("error", "Нет такого фильма!!");
-            return new SimpleCommandResponse("/WEB-INF/jsp/review.jsp", false);
+            request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
         }
 
         try {
@@ -52,8 +54,8 @@ public class ReviewCommand implements Command {
             reviewService.create(new Review(user.getId(), movie.getId(), value, text));
             return new SimpleCommandResponse("/KinoLike/index.jsp", true);
         }
-        request.setAttribute("error", "Вы уже оставили отзыв на этот фильм!!");
-        return new SimpleCommandResponse("/WEB-INF/jsp/review.jsp", false);
+        request.setAttribute(ERROR_ATTRIBUTE, REVIEW_IS_EXIST_MSG);
+        return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
     }
 }
 

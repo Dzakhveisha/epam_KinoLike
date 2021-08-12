@@ -43,8 +43,6 @@ public class DeleteFilmCommand implements Command {
         }
         catch (UnknownEntityException e){
             //todo log
-            //todo error page
-            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
         }
 
         final HttpSession session = request.getCurrentSession().get();
@@ -60,7 +58,7 @@ public class DeleteFilmCommand implements Command {
         request.setAttribute(FILMS_ATTRIBUTE, films);
         request.setAttribute(USERS_ATTRIBUTE, users);
         request.setAttribute(ADMIN_ATTRIBUTE, curUser);
-        return new SimpleCommandResponse("/WEB-INF/jsp/admin.jsp",false);
+        return new SimpleCommandResponse("/KinoLike/controller?command=show_admin",true);
     }
 
     private void deleteImage(HttpServletRequest request, String imagePath) {
