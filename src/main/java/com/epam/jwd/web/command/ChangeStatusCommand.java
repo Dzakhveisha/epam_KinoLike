@@ -1,5 +1,6 @@
 package com.epam.jwd.web.command;
 
+import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.model.User;
@@ -18,6 +19,8 @@ public class ChangeStatusCommand implements Command{
     private static final String GENRES_ATTRIBUTE = "genres";
     private static final String USER_ATTRIBUTE = "user";
     private static final String STATUS_PARAMETER = "status";
+    private static final String ERROR_ATTRIBUTE = "error";
+
     private final FilmService filmService;
     private final UserService userService;
 
@@ -27,10 +30,23 @@ public class ChangeStatusCommand implements Command{
     }
     @Override
     public CommandResponse execute(CommandRequest request) {
-
+        String statusName = request.getParameter(STATUS_PARAMETER);
         String userName = request.getParameter(USER_ATTRIBUTE);
-        User user = userService.findByLogin(userName);
-        UserStatus newStatus = UserStatus.valueOf(request.getParameter(STATUS_PARAMETER));
+        if (userName == null || statusName == null){
+            request.setAttribute(ERROR_ATTRIBUTE, "Not all data is entered!");
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
+        }
+
+        User user;
+        UserStatus newStatus;
+        try {
+            user = userService.findByLogin(userName);
+            newStatus = UserStatus.getStatusByName(statusName);
+        } catch (UnknownEntityException e) {
+            //todo log
+            request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
+        }
         userService.update(new User(user.getId(), user.getName(), user.getAge(),
                 user.getRole().getId(), user.getEmail(), user.getPasswordHash(), newStatus.getId()));
 
@@ -47,7 +63,6 @@ public class ChangeStatusCommand implements Command{
         request.setAttribute(FILMS_ATTRIBUTE, films);
         request.setAttribute(USERS_ATTRIBUTE, users);
         request.setAttribute(ADMIN_ATTRIBUTE, curUser);
-
         return new SimpleCommandResponse("/KinoLike/controller?command=show_admin",true);
     }
 }

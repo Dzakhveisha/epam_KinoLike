@@ -18,7 +18,7 @@ public enum UserStatus implements DbEntity {
         return id;
     }
 
-    public static UserStatus getStatusById(long id){
+    public static UserStatus getStatusById(long id) {
         for (UserStatus status : values()) {
             if (status.getId() == id) {
                 return status;
@@ -33,5 +33,13 @@ public enum UserStatus implements DbEntity {
                 "value=" + this.name() +
                 "id=" + id +
                 '}';
+    }
+
+    public static UserStatus getStatusByName(String name) {
+        try {
+            return valueOf(name);
+        } catch (IllegalArgumentException e) {
+            throw new UnknownEntityException("Impossible to find UserStatus");
+        }
     }
 }
