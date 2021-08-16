@@ -1,5 +1,7 @@
 package com.epam.jwd.web.command;
 
+import com.epam.jwd.web.Validator.Validator;
+import com.epam.jwd.web.exception.DataIsNotValidateException;
 import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.Country;
 import com.epam.jwd.web.model.FilmGenre;
@@ -25,25 +27,48 @@ public class NewFilmCommand implements Command {
     private static final String PARAMETER_GENRE = "genre";
     private static final String FILE_NAME_PARAMETER = "fileName";
     private static final String PART_NAME = "image";
+    private static final String ERROR_ATTRIBUTE = "error";
+
     private final FilmService filmService;
     private final CountryService countryService;
+    private final Validator dataValidator;
 
     public NewFilmCommand() {
         filmService = FilmService.getInstance();
         countryService = CountryService.getInstance();
+        dataValidator = Validator.getInstance();
     }
+
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String name = replaceScripts(new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-        String description = replaceScripts(new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-
-        Integer year = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
-        FilmGenre genre = FilmGenre.valueOf(request.getParameter(PARAMETER_GENRE));
+        String name = request.getParameter(PARAMETER_NAME);
+        String description = request.getParameter(PARAMETER_DESCRIPTION);
+        String yearString = request.getParameter(PARAMETER_YEAR);
+        String genreString = request.getParameter(PARAMETER_GENRE);
         String uploadedName = request.getParameter(FILE_NAME_PARAMETER);
+        String countryString = request.getParameter(PARAMETER_COUNTRY);
+
+        if(name == null || description == null || yearString == null || genreString == null
+                || uploadedName == null || countryString == null){
+            request.setAttribute(ERROR_ATTRIBUTE, "Not enough data!");
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+        }
+
+        name = replaceScripts(new String(name.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        description = replaceScripts(new String(description.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        String countryName = replaceScripts(new String(countryString.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        Integer year = Integer.parseInt(yearString);
         uploadedName = uploadedName.substring(uploadedName.lastIndexOf('\\') + 1);
 
-        String countryName =replaceScripts(new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        FilmGenre genre;
+        try{
+            genre = FilmGenre.getGenreByName(genreString);
+        }catch(UnknownEntityException e){
+            request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+        }
+
         Country country;
         try{
             country = countryService.findByName(countryName);
@@ -56,10 +81,17 @@ public class NewFilmCommand implements Command {
         try {
             updateImage(request.getReq(),filePart, uploadedName);
         } catch (IOException e) {
-            e.printStackTrace();
             //todo
         }
-        filmService.create(new Movie(name, year, description, country.getId(), genre.getId(), uploadedName));
+
+        Movie newMovie = new Movie(name, year, description, country.getId(), genre.getId(), uploadedName);
+        try{
+           dataValidator.validateFilm(newMovie);
+        } catch (DataIsNotValidateException e) {
+            request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+        }
+        filmService.create(newMovie);
         return new SimpleCommandResponse("/KinoLike/index.jsp",true);
     }
 

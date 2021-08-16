@@ -13,7 +13,7 @@ public class User implements DbEntity {
     private int age;
     private String email;
 
-    public User(long id, String name, int age, long roleInt, String email, String password, long statusint) {
+    public User(long id, String name, int age, long roleInt, String email, String password, long statusInt) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -24,7 +24,11 @@ public class User implements DbEntity {
         }
         this.email = email;
         this.passwordHash = password;
-        this.status = UserStatus.getStatusById(statusint);
+        try {
+            this.status = UserStatus.getStatusById(statusInt);
+        } catch (UnknownEntityException e) {
+            this.status = UserStatus.BEGINNER;
+        }
     }
 
     public User(String login, String password) {
@@ -47,7 +51,7 @@ public class User implements DbEntity {
         this.status = UserStatus.BEGINNER;
     }
 
-    public User(String name, int age, Long roleInt, String email, String password, Long statusint) {
+    public User(String name, int age, Long roleInt, String email, String password, Long statusInt) {
         this.id = id;
         this.name = name;
         this.age = age;
@@ -58,7 +62,11 @@ public class User implements DbEntity {
         }
         this.email = email;
         this.passwordHash = password;
-        this.status = UserStatus.getStatusById(statusint);
+        try {
+            this.status = UserStatus.getStatusById(statusInt);
+        } catch (UnknownEntityException e) {
+            this.status = UserStatus.BEGINNER;
+        }
     }
 
     public String getName() {

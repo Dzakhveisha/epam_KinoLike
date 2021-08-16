@@ -37,8 +37,9 @@ public enum UserStatus implements DbEntity {
 
     public static UserStatus getStatusByName(String name) {
         try {
-            return valueOf(name);
+            return valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
+            //todo log
             throw new UnknownEntityException("Impossible to find UserStatus");
         }
     }

@@ -23,8 +23,14 @@ public class LoginCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String password = replaceScripts(new String(request.getParameter(PASSWORD_PARAM).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-        String login = replaceScripts(new String(request.getParameter(LOGIN_PARAM).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        String password = request.getParameter(PASSWORD_PARAM);
+        String login = request.getParameter(LOGIN_PARAM);
+        if(password == null || login == null){
+            request.setAttribute(ERROR_ATTRIBUTE, "Not enough data!");
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+        }
+        password = replaceScripts(new String(password.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        login = replaceScripts(new String(login.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         User logUser = new User(login, password);
         if (userService.canLogIn(logUser)) {
             request.getCurrentSession().ifPresent(HttpSession::invalidate);

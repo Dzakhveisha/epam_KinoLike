@@ -1,6 +1,6 @@
 package com.epam.jwd.web.command;
 
-import Validator.Validator;
+import com.epam.jwd.web.Validator.Validator;
 import com.epam.jwd.web.exception.DataIsNotValidateException;
 import com.epam.jwd.web.model.User;
 import com.epam.jwd.web.service.UserService;
@@ -31,16 +31,14 @@ public class RegisterCommand implements Command {
         String login = request.getParameter(LOGIN_PARAMETER);
         String ageString = request.getParameter(AGE_PARAMETER);
         int age = 0;
-        if (password != null && mail != null && login != null) {
-           password = replaceScripts(new String(password.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-           mail = replaceScripts(new String(mail.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-           login = replaceScripts(new String(login.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-           age = Integer.parseInt(ageString);
-        }
-        else{
+        if (password == null || mail == null || login == null) {
             request.setAttribute(ERROR_ATTRIBUTE, "Not all data is entered!");
             return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
         }
+        password = replaceScripts(new String(password.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        mail = replaceScripts(new String(mail.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        login = replaceScripts(new String(login.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        age = Integer.parseInt(ageString);
 
         User newUser = new User(login, password, mail, age);
         try {

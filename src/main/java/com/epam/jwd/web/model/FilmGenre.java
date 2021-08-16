@@ -31,6 +31,15 @@ public enum FilmGenre implements DbEntity {
         throw new UnknownEntityException("Impossible to find MovieGenre");
     }
 
+    public static FilmGenre getGenreByName(String name){
+        try{
+            return valueOf(name);
+        }catch (IllegalArgumentException e){
+            //todo log
+            throw new UnknownEntityException("Impossible to find MovieGenre");
+        }
+    }
+
     @Override
     public String toString() {
         return "FilmGenre{" +

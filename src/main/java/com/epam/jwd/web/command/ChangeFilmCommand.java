@@ -32,6 +32,8 @@ public class ChangeFilmCommand implements Command {
     private static final String FILE_NAME_PARAMETER = "fileName";
     private static final String USER_ATTRIBUTE = "user";
     private static final String PART_NAME = "image";
+    private static final String ERROR_ATTRIBUTE = "error";
+
 
     private final FilmService filmService;
     private final UserService userService;
@@ -45,16 +47,36 @@ public class ChangeFilmCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
+        String filmName = request.getParameter(FILM_PARAMETER);
+        String newName = request.getParameter(PARAMETER_NAME);
+        String newDescription = request.getParameter(PARAMETER_DESCRIPTION);
+        String yearString = request.getParameter(PARAMETER_YEAR);
+        String genreString = request.getParameter(PARAMETER_GENRE);
+        String uploadedName = request.getParameter(FILE_NAME_PARAMETER);
+        String countryName = request.getParameter(PARAMETER_COUNTRY);
 
-        String filmName = replaceScripts(new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-        Movie oldFilm = filmService.findByName(filmName);
+        if(filmName == null || newName == null || newDescription == null ||
+                yearString == null || genreString == null || uploadedName == null || countryName == null){
+            request.setAttribute(ERROR_ATTRIBUTE, "Not enough data!");
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+        }
 
-        String newName = replaceScripts(new String(request.getParameter(PARAMETER_NAME).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-        String newDescription = replaceScripts(new String(request.getParameter(PARAMETER_DESCRIPTION).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
-        int newYear = Integer.parseInt(request.getParameter(PARAMETER_YEAR));
-        FilmGenre newGenre = FilmGenre.valueOf(request.getParameter(PARAMETER_GENRE));
 
-        String countryName =replaceScripts(new String(request.getParameter(PARAMETER_COUNTRY).getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        filmName = replaceScripts(new String(filmName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        Movie oldFilm;
+        try {
+            oldFilm = filmService.findByName(filmName);
+        }catch (UnknownEntityException e){
+            request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+        }
+
+        newName = replaceScripts(new String(newName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        newDescription = replaceScripts(new String(newDescription.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
+        int newYear = Integer.parseInt(yearString);
+        FilmGenre newGenre = FilmGenre.getGenreByName(genreString);
+
+        countryName = replaceScripts(new String(countryName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         Country newCountry;
         try{
             newCountry = countryService.findByName(countryName);
@@ -63,7 +85,7 @@ public class ChangeFilmCommand implements Command {
             newCountry = countryService.findByName(countryName);
         }
 
-        String uploadedName = request.getParameter(FILE_NAME_PARAMETER);
+        uploadedName = new String(uploadedName.getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
         uploadedName = uploadedName.substring(uploadedName.lastIndexOf('\\') + 1);
 
         Part filePart = request.getPart(PART_NAME);
@@ -74,6 +96,7 @@ public class ChangeFilmCommand implements Command {
             uploadedName = oldFilm.getImagePath();
             //TODO
         }
+
         filmService.update(new Movie(oldFilm.getId(), newName, newYear, newDescription, newCountry.getId(), oldFilm.getRating(),
                 newGenre.getId(), uploadedName));
 

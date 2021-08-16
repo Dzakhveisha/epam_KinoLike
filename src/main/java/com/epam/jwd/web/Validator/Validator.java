@@ -1,6 +1,7 @@
-package Validator;
+package com.epam.jwd.web.Validator;
 
 import com.epam.jwd.web.exception.DataIsNotValidateException;
+import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.model.User;
 
 public class Validator {
@@ -25,9 +26,6 @@ public class Validator {
     }
 
     public void validateUser(User user) throws DataIsNotValidateException {
-        if (user.getPasswordHash() == null || user.getEmail() == null){
-            throw new DataIsNotValidateException("Null!");
-        }
         if (user.getName().length() > 40 || user.getPasswordHash().length() > 40){
             throw new DataIsNotValidateException("Login or password is too long!");
         }
@@ -37,5 +35,22 @@ public class Validator {
         if (!user.getEmail().contains("@")){
             throw new DataIsNotValidateException("Email is not correct!");
         }
+    }
+
+    public void validateFilm(Movie movie) throws DataIsNotValidateException{
+        if(movie.getYear() < 1895 || movie.getYear() > 2022) {
+            throw new DataIsNotValidateException("Year is not Real!");
+        }
+        if(movie.getName().length() > 45) {
+            throw new DataIsNotValidateException("Film name is too long!");
+        }
+        if(movie.getCountryName().length() > 50) {
+            throw new DataIsNotValidateException("Country name is too long!");
+        }
+        if(movie.getDescription().length() > 2000) {
+            throw new DataIsNotValidateException("Film description is too long!");
+        }
+
+
     }
 }

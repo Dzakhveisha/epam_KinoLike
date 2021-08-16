@@ -75,9 +75,9 @@ public class ShowMainPageCommand implements Command {
         String genreName = request.getParameter(GENRE_PARAMETER);
         if (genreName != null) {
             try {
-                FilmGenre genre = FilmGenre.valueOf(genreName);
+                FilmGenre genre = FilmGenre.getGenreByName(genreName);
                 films = filmService.finAllByGenre(genre);
-            }catch (IllegalArgumentException e){
+            }catch (UnknownEntityException e){
                 films = Collections.emptyList();
             }
         }
