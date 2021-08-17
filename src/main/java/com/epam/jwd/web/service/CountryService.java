@@ -7,6 +7,9 @@ import com.epam.jwd.web.model.Country;
 import java.util.List;
 
 public class CountryService {
+    private static final String NOT_FOUND_WITH_NAME_MSG = "Country with such name does not found!";
+    private static final String NOT_FOUND_WITH_ID_MSG = "Country with such id does not found!";
+
     private static CountryService instance;
     private final JdbcCountryDao countryDao;
 
@@ -33,11 +36,11 @@ public class CountryService {
     }
 
     public Country findByName(String name) throws UnknownEntityException {
-        return countryDao.findCountryByName(name).orElseThrow(() -> new UnknownEntityException(" Country with such name not found!"));
+        return countryDao.findCountryByName(name).orElseThrow(() -> new UnknownEntityException(NOT_FOUND_WITH_NAME_MSG));
     }
 
     public Country findById(Long id) throws UnknownEntityException {
-        return countryDao.findById(id).orElseThrow(() -> new UnknownEntityException(" Country with such id not found!"));
+        return countryDao.findById(id).orElseThrow(() -> new UnknownEntityException(NOT_FOUND_WITH_ID_MSG));
     }
 
     public Country create(Country country) {

@@ -46,6 +46,5 @@ public class ShowAdminPageCommand implements Command {
         request.setAttribute(USERS_ATTRIBUTE, users);
         request.setAttribute(ADMIN_ATTRIBUTE, curUser);
         return new SimpleCommandResponse("/WEB-INF/jsp/admin.jsp", false);
-
     }
 }

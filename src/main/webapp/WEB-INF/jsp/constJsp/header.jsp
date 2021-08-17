@@ -17,8 +17,10 @@
     </a>
     <ul class="menu">
         <li>
-            <form action="${pageContext.request.contextPath}/controller?command=show_main&sort=search" method="post">
-                <input class="search" name="search" placeholder=<fmt:message key="search"/> type="search"/>
+            <form id="searchFilmsForm" action="${pageContext.request.contextPath}/controller?command=show_main&sort=search" method="post">
+                <input class="search" name="search" placeholder=<fmt:message key="search"/> type="search"/
+                    onchange="form = document.getElementById('searchFilmsForm');
+                              form.action = form.action + '&search=' + form.getElementsByClassName('search')[0].value; ">
                 <button><img src="${pageContext.request.contextPath}/img/search.png" height="25"> </button>
             </form>
 

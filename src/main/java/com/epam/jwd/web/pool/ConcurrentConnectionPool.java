@@ -3,6 +3,8 @@ package com.epam.jwd.web.pool;
 import com.epam.jwd.web.exception.CouldNotDestroyConnectionPoolException;
 import com.epam.jwd.web.exception.CouldNotInitializeConnectionPoolException;
 import com.epam.jwd.web.util.PropertyReader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -17,11 +19,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ConcurrentConnectionPool implements ConnectionPool {
 
+    static final Logger LOGGER = LogManager.getRootLogger();
     private static final ConcurrentConnectionPool instance = new ConcurrentConnectionPool();
-
     private static final int START_POOL_SIZE = 8;
     private static final int MAX_CONNECTION_AMOUNT = 32;
     private static final int GROW_FACTOR = 4;
+
+    private static final String POOL_DESTROYING_FAIL_MSG = "Pool destroying failed.";
+    private static final String POOL_INITIALIZATION_FAIL_MSG = "Pool initialisation failed.";
+    private static final String TAKING_CONNECTION_FAIL_MSG = "Taking connection failed.";
+    private static final String DRIVER_REGISTRATION_FAIL_MSG = "Driver registration failed.";
+    private static final String DRIVER_UNREGISTERING_FAIL_MSG = "Unregistering drivers failed";
 
     private final String url;
     private final String user;
@@ -49,7 +57,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
         try {
             this.init();
         } catch (CouldNotInitializeConnectionPoolException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
     }
 
@@ -65,9 +73,9 @@ public class ConcurrentConnectionPool implements ConnectionPool {
                     connectionQueue.add(pooledConnection);
                 }
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error(POOL_INITIALIZATION_FAIL_MSG + e.getMessage());
                 initialized.set(false);
-                throw new CouldNotInitializeConnectionPoolException("Pool initialisation failed.", e);
+                throw new CouldNotInitializeConnectionPoolException(POOL_INITIALIZATION_FAIL_MSG, e);
             }
             connectionsOpened.set(START_POOL_SIZE);
         }
@@ -85,12 +93,12 @@ public class ConcurrentConnectionPool implements ConnectionPool {
             closeConnectionsQueue(busyConQueue);
             closeConnectionsQueue(connectionQueue);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new CouldNotDestroyConnectionPoolException("Pool initialisation failed.", e);
+            LOGGER.error(POOL_DESTROYING_FAIL_MSG + e.getMessage());
+            throw new CouldNotDestroyConnectionPoolException(POOL_DESTROYING_FAIL_MSG, e);
         }
     }
 
-    public Connection takeConnection(){
+    public Connection takeConnection() {
         int curOpenedConnections = connectionsOpened.get();
         if (connectionQueue.size() <= curOpenedConnections * 0.25
                 && curOpenedConnections < MAX_CONNECTION_AMOUNT) {
@@ -103,7 +111,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
                 }
                 connectionsOpened.set(connectionsOpened.get() + GROW_FACTOR);
             } catch (SQLException e) {
-                e.printStackTrace();
+                LOGGER.error(TAKING_CONNECTION_FAIL_MSG + e.getMessage());
             }
         }
 
@@ -112,7 +120,7 @@ public class ConcurrentConnectionPool implements ConnectionPool {
             connection = connectionQueue.take();
             busyConQueue.add(connection);
         } catch (InterruptedException e) {
-                e.printStackTrace();
+            LOGGER.error(TAKING_CONNECTION_FAIL_MSG + e.getMessage());
         }
         return connection;
     }
@@ -140,12 +148,10 @@ public class ConcurrentConnectionPool implements ConnectionPool {
     private void registerDrivers() throws CouldNotInitializeConnectionPoolException {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver").getDeclaredConstructor().newInstance();
-            //DriverManager.registerDriver(DriverManager.getDriver(url));
-        } catch (ClassNotFoundException | NoSuchMethodException e) {
-            e.printStackTrace();
-            throw new CouldNotInitializeConnectionPoolException("drivers registration failed", e);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+                InstantiationException | InvocationTargetException e) {
+            LOGGER.error(DRIVER_REGISTRATION_FAIL_MSG + e.getMessage());
+            throw new CouldNotInitializeConnectionPoolException(DRIVER_REGISTRATION_FAIL_MSG, e);
         }
     }
 
@@ -155,8 +161,8 @@ public class ConcurrentConnectionPool implements ConnectionPool {
             try {
                 DriverManager.deregisterDriver(drivers.nextElement());
             } catch (SQLException e) {
-                e.printStackTrace();
-                throw  new CouldNotDestroyConnectionPoolException("unregistering drivers failed", e);
+                LOGGER.error(DRIVER_REGISTRATION_FAIL_MSG + e.getMessage());
+                throw new CouldNotDestroyConnectionPoolException(DRIVER_UNREGISTERING_FAIL_MSG, e);
             }
         }
     }

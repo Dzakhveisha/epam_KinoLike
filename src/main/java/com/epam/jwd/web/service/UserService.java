@@ -8,6 +8,7 @@ import com.epam.jwd.web.dao.DaoImpl.JdbcUserStatusDao;
 import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.User;
 import com.epam.jwd.web.model.UserStatus;
+import com.sun.media.jfxmedia.logging.Logger;
 
 import java.util.List;
 

@@ -8,6 +8,8 @@ import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.service.CountryService;
 import com.epam.jwd.web.service.FilmService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 
 
 public class NewFilmCommand implements Command {
+    static final Logger LOGGER = LogManager.getRootLogger();
 
     private static final String PARAMETER_NAME = "name";
     private static final String PARAMETER_YEAR = "year";
@@ -28,6 +31,8 @@ public class NewFilmCommand implements Command {
     private static final String FILE_NAME_PARAMETER = "fileName";
     private static final String PART_NAME = "image";
     private static final String ERROR_ATTRIBUTE = "error";
+    private static final String NOT_ENOUGH_DATA_MSG = "Not enough data!";
+    private static final String POSTER_HAS_BEEN_NOT_ADDED_MSG = "Movie poster has not been added!";
 
     private final FilmService filmService;
     private final CountryService countryService;
@@ -38,7 +43,6 @@ public class NewFilmCommand implements Command {
         countryService = CountryService.getInstance();
         dataValidator = Validator.getInstance();
     }
-
 
     @Override
     public CommandResponse execute(CommandRequest request) {
@@ -51,7 +55,7 @@ public class NewFilmCommand implements Command {
 
         if(name == null || description == null || yearString == null || genreString == null
                 || uploadedName == null || countryString == null){
-            request.setAttribute(ERROR_ATTRIBUTE, "Not enough data!");
+            request.setAttribute(ERROR_ATTRIBUTE, NOT_ENOUGH_DATA_MSG);
             return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
         }
 
@@ -65,6 +69,7 @@ public class NewFilmCommand implements Command {
         try{
             genre = FilmGenre.getGenreByName(genreString);
         }catch(UnknownEntityException e){
+            LOGGER.error(e.getMessage() + " Genre Name:" + genreString);
             request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
             return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
         }
@@ -73,6 +78,7 @@ public class NewFilmCommand implements Command {
         try{
             country = countryService.findByName(countryName);
         }catch(UnknownEntityException e){
+            LOGGER.error(e.getMessage() + " Country Name:" + genreString);
             countryService.create(new Country(countryName));
             country = countryService.findByName(countryName);
         }
@@ -81,13 +87,14 @@ public class NewFilmCommand implements Command {
         try {
             updateImage(request.getReq(),filePart, uploadedName);
         } catch (IOException e) {
-            //todo
+            LOGGER.error(e.getMessage() + POSTER_HAS_BEEN_NOT_ADDED_MSG);
         }
 
         Movie newMovie = new Movie(name, year, description, country.getId(), genre.getId(), uploadedName);
         try{
            dataValidator.validateFilm(newMovie);
         } catch (DataIsNotValidateException e) {
+            LOGGER.error(e.getMessage());
             request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
             return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
         }

@@ -2,6 +2,7 @@ package com.epam.jwd.web.Validator;
 
 import com.epam.jwd.web.exception.DataIsNotValidateException;
 import com.epam.jwd.web.model.Movie;
+import com.epam.jwd.web.model.Review;
 import com.epam.jwd.web.model.User;
 
 public class Validator {
@@ -50,7 +51,14 @@ public class Validator {
         if(movie.getDescription().length() > 2000) {
             throw new DataIsNotValidateException("Film description is too long!");
         }
+    }
 
-
+    public void validateReview(Review review) throws DataIsNotValidateException{
+        if (review.getValue() > 10 || review.getValue() < 0){
+            throw new DataIsNotValidateException("Rating is not Real! It must be between 0 and 10.");
+        }
+        if (review.getText().length() > 1000){
+            throw new DataIsNotValidateException("Text comment is too long!");
+        }
     }
 }

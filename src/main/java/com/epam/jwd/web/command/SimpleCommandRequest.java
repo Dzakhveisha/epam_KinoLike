@@ -1,5 +1,8 @@
 package com.epam.jwd.web.command;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -8,6 +11,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class SimpleCommandRequest implements CommandRequest{
+    static final Logger LOGGER = LogManager.getRootLogger();
 
     private HttpServletRequest req;
 
@@ -48,7 +52,7 @@ public class SimpleCommandRequest implements CommandRequest{
         try {
             return req.getPart(part);
         } catch (IOException | ServletException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
             return null;
         }
     }

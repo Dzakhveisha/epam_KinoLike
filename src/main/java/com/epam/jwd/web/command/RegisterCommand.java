@@ -4,6 +4,8 @@ import com.epam.jwd.web.Validator.Validator;
 import com.epam.jwd.web.exception.DataIsNotValidateException;
 import com.epam.jwd.web.model.User;
 import com.epam.jwd.web.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.charset.StandardCharsets;
 
@@ -16,6 +18,10 @@ public class RegisterCommand implements Command {
     private static final String LOGIN_PARAMETER = "login";
     private static final Object LOGIN_IS_EXIST_MSG = "This login is already exist!!";
     private static final String ERROR_ATTRIBUTE = "error";
+    private static final String NOT_ENOUGH_DATA_MSG = "Not enough data!";
+
+    static final Logger LOGGER = LogManager.getRootLogger();
+
     private final UserService userService;
     private final Validator dataValidator;
 
@@ -32,7 +38,7 @@ public class RegisterCommand implements Command {
         String ageString = request.getParameter(AGE_PARAMETER);
         int age = 0;
         if (password == null || mail == null || login == null) {
-            request.setAttribute(ERROR_ATTRIBUTE, "Not all data is entered!");
+            request.setAttribute(ERROR_ATTRIBUTE, NOT_ENOUGH_DATA_MSG);
             return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
         }
         password = replaceScripts(new String(password.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
@@ -44,7 +50,7 @@ public class RegisterCommand implements Command {
         try {
             dataValidator.validateUser(newUser);
         } catch (DataIsNotValidateException e) {
-            //todo log
+            LOGGER.error(e.getMessage());
             request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
             return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
         }

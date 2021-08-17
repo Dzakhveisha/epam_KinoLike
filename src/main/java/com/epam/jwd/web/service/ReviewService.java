@@ -10,6 +10,7 @@ import com.epam.jwd.web.model.User;
 import java.util.List;
 
 public class ReviewService {
+    private static final String REVIEW_NOT_FOUND_MSG = " Review for this user and this movie not found!";
     private static ReviewService instance;
     private final ReviewDao reviewDao;
 
@@ -40,7 +41,7 @@ public class ReviewService {
     }
 
     public Review findBy(Movie movie, User user) throws UnknownEntityException {
-        return reviewDao.findByFilmAndUser(movie, user).orElseThrow(() -> new UnknownEntityException(" Review for this user and this movie not faund!"));
+        return reviewDao.findByFilmAndUser(movie, user).orElseThrow(() -> new UnknownEntityException(REVIEW_NOT_FOUND_MSG));
     }
 
     public Review create(Review review) {

@@ -1,8 +1,5 @@
 package com.epam.jwd.web.command;
 
-import com.epam.jwd.web.command.Command;
-import com.epam.jwd.web.command.CommandRequest;
-import com.epam.jwd.web.command.CommandResponse;
 import com.epam.jwd.web.exception.UnknownEntityException;
 import com.epam.jwd.web.model.FilmGenre;
 import com.epam.jwd.web.model.Movie;
@@ -10,6 +7,8 @@ import com.epam.jwd.web.model.User;
 import com.epam.jwd.web.model.UserStatus;
 import com.epam.jwd.web.service.FilmService;
 import com.epam.jwd.web.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DeleteFilmCommand implements Command {
+    static final Logger LOGGER = LogManager.getRootLogger();
+
     private static final String FILMS_ATTRIBUTE = "films";
     private static final String USERS_ATTRIBUTE = "users";
     private static final String ADMIN_ATTRIBUTE = "admin";
@@ -26,6 +27,10 @@ public class DeleteFilmCommand implements Command {
     private static final String GENRES_ATTRIBUTE = "genres";
     private static final String USER_ATTRIBUTE = "user";
     private static final String FILM_PARAMETER = "film";
+    private static final String ERROR_ATTRIBUTE = "error";
+    private static final String NOT_ENOUGH_DATA_MSG = "Not enough data!";
+    private static final String FILM_WAS_NOT_DEL_MSG = " The movie was not deleted";
+
     private final FilmService filmService;
     private final UserService userService;
 
@@ -36,13 +41,22 @@ public class DeleteFilmCommand implements Command {
 
     @Override
     public CommandResponse execute(CommandRequest request) {
-        String name = new String(request.getParameter(FILM_PARAMETER).getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
+        String name = request.getParameter(FILM_PARAMETER);
+
+        if(name == null){
+            request.setAttribute(ERROR_ATTRIBUTE, NOT_ENOUGH_DATA_MSG);
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
+        }
+
+        name = new String(name.getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
         try {
-            deleteImage(request.getReq(), filmService.findByName(name).getImagePath());
             filmService.deleteByName(name);
+            deleteImage(request.getReq(), filmService.findByName(name).getImagePath());
         }
         catch (UnknownEntityException e){
-            //todo log
+            LOGGER.error(e.getMessage() + FILM_WAS_NOT_DEL_MSG);
+            request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
         }
 
         final HttpSession session = request.getCurrentSession().get();

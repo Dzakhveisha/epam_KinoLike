@@ -5,6 +5,8 @@ import com.epam.jwd.web.model.*;
 import com.epam.jwd.web.service.CountryService;
 import com.epam.jwd.web.service.FilmService;
 import com.epam.jwd.web.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class ChangeFilmCommand implements Command {
+
+    static final Logger LOGGER = LogManager.getRootLogger();
 
     private static final String FILMS_ATTRIBUTE = "films";
     private static final String USERS_ATTRIBUTE = "users";
@@ -33,6 +37,9 @@ public class ChangeFilmCommand implements Command {
     private static final String USER_ATTRIBUTE = "user";
     private static final String PART_NAME = "image";
     private static final String ERROR_ATTRIBUTE = "error";
+
+    private static final String NOT_ENOUGH_DATA_MSG = "Not enough data!";
+    private static final String IMAGE_NOT_UPDATED_MSG = "Movie poster has not been updated!";
 
 
     private final FilmService filmService;
@@ -55,46 +62,54 @@ public class ChangeFilmCommand implements Command {
         String uploadedName = request.getParameter(FILE_NAME_PARAMETER);
         String countryName = request.getParameter(PARAMETER_COUNTRY);
 
-        if(filmName == null || newName == null || newDescription == null ||
-                yearString == null || genreString == null || uploadedName == null || countryName == null){
-            request.setAttribute(ERROR_ATTRIBUTE, "Not enough data!");
-            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+        if (filmName == null || newName == null || newDescription == null ||
+                yearString == null || genreString == null || uploadedName == null || countryName == null) {
+            request.setAttribute(ERROR_ATTRIBUTE, NOT_ENOUGH_DATA_MSG);
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
         }
-
 
         filmName = replaceScripts(new String(filmName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         Movie oldFilm;
         try {
             oldFilm = filmService.findByName(filmName);
-        }catch (UnknownEntityException e){
+        } catch (UnknownEntityException e) {
+            LOGGER.error(e.getMessage() + "Name :" + filmName);
             request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
-            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp",false);
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
         }
 
         newName = replaceScripts(new String(newName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         newDescription = replaceScripts(new String(newDescription.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         int newYear = Integer.parseInt(yearString);
-        FilmGenre newGenre = FilmGenre.getGenreByName(genreString);
+        FilmGenre newGenre;
+        try {
+            newGenre = FilmGenre.getGenreByName(genreString);
+        } catch (UnknownEntityException e) {
+            LOGGER.error(e.getMessage() + "Genre Name :" + genreString);
+            request.setAttribute(ERROR_ATTRIBUTE, e.getMessage());
+            return new SimpleCommandResponse("/WEB-INF/jsp/error.jsp", false);
+        }
 
         countryName = replaceScripts(new String(countryName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8));
         Country newCountry;
-        try{
+        try {
             newCountry = countryService.findByName(countryName);
-        }catch(UnknownEntityException e){
+        } catch (UnknownEntityException e) {
+            LOGGER.error(e.getMessage() + "Country Name :" + countryName);
             countryService.create(new Country(countryName));
             newCountry = countryService.findByName(countryName);
         }
 
-        uploadedName = new String(uploadedName.getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
+        uploadedName = new String(uploadedName.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
         uploadedName = uploadedName.substring(uploadedName.lastIndexOf('\\') + 1);
 
         Part filePart = request.getPart(PART_NAME);
         try {
             if (filePart.getSize() != 0)
-            updateImage(request.getReq(),filePart, uploadedName);
+                updateImage(request.getReq(), filePart, uploadedName);
         } catch (IOException e) {
             uploadedName = oldFilm.getImagePath();
-            //TODO
+            LOGGER.error(e.getMessage() + IMAGE_NOT_UPDATED_MSG);
         }
 
         filmService.update(new Movie(oldFilm.getId(), newName, newYear, newDescription, newCountry.getId(), oldFilm.getRating(),
@@ -113,7 +128,7 @@ public class ChangeFilmCommand implements Command {
         request.setAttribute(FILMS_ATTRIBUTE, films);
         request.setAttribute(USERS_ATTRIBUTE, users);
         request.setAttribute(ADMIN_ATTRIBUTE, curUser);
-        return new SimpleCommandResponse("/KinoLike/controller?command=show_admin",true);
+        return new SimpleCommandResponse("/KinoLike/controller?command=show_admin", true);
     }
 
     private void updateImage(HttpServletRequest request, Part part, String uploadedName) throws IOException {
@@ -136,9 +151,9 @@ public class ChangeFilmCommand implements Command {
         out.close();
     }
 
-    private String replaceScripts(String string){
-        string = string.replaceAll("<","&lt");
-        string = string.replaceAll(">","&gt");
+    private String replaceScripts(String string) {
+        string = string.replaceAll("<", "&lt");
+        string = string.replaceAll(">", "&gt");
         return string;
     }
 }

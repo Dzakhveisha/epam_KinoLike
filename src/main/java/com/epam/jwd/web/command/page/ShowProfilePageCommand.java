@@ -36,7 +36,6 @@ public class ShowProfilePageCommand implements Command {
         request.setAttribute(USER_ATTRIBUTE, curUser);
 
         List<Review> reviews = reviewService.findAllByUser(curUser);
-
         Map<Movie, Review> reviewMovieMap = new HashMap<>();
         List<Movie> films = new ArrayList<>();
         for (Review review: reviews) {
@@ -46,8 +45,6 @@ public class ShowProfilePageCommand implements Command {
         };
         request.setAttribute(REVIEWS_ATTRIBUTE, reviewMovieMap);
         request.setAttribute(FILMS_ATTRIBUTE, films);
-
         return new SimpleCommandResponse("/WEB-INF/jsp/profile.jsp", false);
-
     }
 }

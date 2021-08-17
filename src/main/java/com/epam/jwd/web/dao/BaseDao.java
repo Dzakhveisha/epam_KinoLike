@@ -2,6 +2,8 @@ package com.epam.jwd.web.dao;
 
 import com.epam.jwd.web.model.DbEntity;
 import com.epam.jwd.web.pool.ConcurrentConnectionPool;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,11 +13,18 @@ import java.util.Optional;
 
 public abstract class BaseDao<T extends DbEntity> implements Dao<T> {
 
+    static final Logger LOGGER = LogManager.getRootLogger();
+
     private static final String FIND_ALL_SQL_TEMPLATE = "select * from %s";
     protected static final String FIND_BY_PARAM_SQL_TEMPLATE = "select * from %s where %s = ?";
     private static final String SAVE_SQL_TEMPLATE = "INSERT %s(%s) VALUES";
     private static final String DELETE_SQL_TEMPLATE = "DELETE FROM %s WHERE id = ?";
     private static final String UPDATE_SQL_TEMPLATE = "UPDATE %s SET %s WHERE id = ?";
+    private static final String ENTITY_WAS_NOT_SAVED = "The entity was not saved.";
+    private static final String ENTITY_WAS_NOT_UPDATED = "The entity was not updated.";
+    private static final String ENTITY_WAS_NOT_DELETED = "The entity was not deleted." ;
+    private static final String ENTITIES_WAS_NOT_FOUND = "Entities were not found." ;
+
 
     protected final ConcurrentConnectionPool pool = ConcurrentConnectionPool.getInstance();
     protected final String tableName;
@@ -44,7 +53,7 @@ public abstract class BaseDao<T extends DbEntity> implements Dao<T> {
             statement.close();
             pool.releaseConnection(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(ENTITY_WAS_NOT_SAVED + e.getMessage());
         }
         return entity;
     }
@@ -75,7 +84,7 @@ public abstract class BaseDao<T extends DbEntity> implements Dao<T> {
             statement.close();
             pool.releaseConnection(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(ENTITY_WAS_NOT_UPDATED + e.getMessage());
         }
         return entity;
     }
@@ -90,7 +99,7 @@ public abstract class BaseDao<T extends DbEntity> implements Dao<T> {
             statement.close();
             pool.releaseConnection(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(ENTITY_WAS_NOT_DELETED + e.getMessage());
         }
     }
 
@@ -109,7 +118,7 @@ public abstract class BaseDao<T extends DbEntity> implements Dao<T> {
             statement.close();
             pool.releaseConnection(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(ENTITIES_WAS_NOT_FOUND + e.getMessage());
         }
         return entities;
     }
@@ -128,7 +137,7 @@ public abstract class BaseDao<T extends DbEntity> implements Dao<T> {
             statement.close();
             pool.releaseConnection(connection);
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.error(ENTITIES_WAS_NOT_FOUND + e.getMessage());
         }
         return entities;
     }

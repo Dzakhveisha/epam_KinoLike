@@ -22,7 +22,6 @@ public class ImageServlet extends HttpServlet {
         try (InputStream is = new FileInputStream(imagePath)) {
             // it is the responsibility of the container to close output stream
             OutputStream os = response.getOutputStream();
-
             response.setContentType("image/jpeg");
 
             byte[] buffer = new byte[1024];

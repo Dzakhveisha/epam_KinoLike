@@ -27,7 +27,7 @@ public enum UserRole implements DbEntity {
                 return role;
             }
         }
-        throw new UnknownEntityException("Impossible to find UserRole");
+        throw new UnknownEntityException("Impossible to find UserRole with such id.");
     }
 
     public static UserRole getRoleByName(String name) {
@@ -35,7 +35,7 @@ public enum UserRole implements DbEntity {
             return valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
             //todo log
-            throw new UnknownEntityException("Impossible to find UserRole");
+            throw new UnknownEntityException("Impossible to find UserRole with such name.");
         }
     }
 

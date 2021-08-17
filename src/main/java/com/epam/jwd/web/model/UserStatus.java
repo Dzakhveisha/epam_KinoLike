@@ -24,7 +24,7 @@ public enum UserStatus implements DbEntity {
                 return status;
             }
         }
-        throw new UnknownEntityException("Impossible to find UserStatus");
+        throw new UnknownEntityException("Impossible to find UserStatus with such id.");
     }
 
     @Override
@@ -40,7 +40,7 @@ public enum UserStatus implements DbEntity {
             return valueOf(name.toUpperCase());
         } catch (IllegalArgumentException e) {
             //todo log
-            throw new UnknownEntityException("Impossible to find UserStatus");
+            throw new UnknownEntityException("Impossible to find UserStatus with such name.");
         }
     }
 }

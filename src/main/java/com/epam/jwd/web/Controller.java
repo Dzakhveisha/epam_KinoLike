@@ -17,6 +17,7 @@ public class Controller extends HttpServlet {
 
     private static final String COMMAND_TYPE_PARAM = "command";
 
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         process(req, resp);

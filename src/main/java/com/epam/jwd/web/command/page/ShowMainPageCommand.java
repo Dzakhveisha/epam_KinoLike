@@ -12,12 +12,16 @@ import com.epam.jwd.web.model.User;
 import com.epam.jwd.web.service.FilmService;
 import com.epam.jwd.web.service.ReviewService;
 import com.epam.jwd.web.service.UserService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.HttpSession;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class ShowMainPageCommand implements Command {
+
+    static final Logger LOGGER = LogManager.getRootLogger();
 
     private static final String GENRES_ATTRIBUTE = "genres";
     private static final String HAVE_REVIEWS_ATTRIBUTE = "filmReviews";
@@ -47,12 +51,11 @@ public class ShowMainPageCommand implements Command {
         List<Movie> films = getFilms(request);
         request.setAttribute(FILMS_ATTRIBUTE, films);
         request.setAttribute(HAVE_REVIEWS_ATTRIBUTE, getFilmsAndReviewsMap(request, films));
-
         return new SimpleCommandResponse("/WEB-INF/jsp/main.jsp", false);
     }
 
     private List<Movie> getFilms(CommandRequest request) {
-        List<Movie> films = new ArrayList<>();
+        List<Movie> films;
         String sortType = request.getParameter(SORT_PARAMETER);
         if (sortType != null) {
             switch (sortType) {
@@ -63,8 +66,12 @@ public class ShowMainPageCommand implements Command {
                     films = filmService.findAllPopular();
                     break;
                 case SORT_TYPE_SEARCH:
-                    String searchStr = new String(request.getParameter(SEARCH_PARAMETER).getBytes(StandardCharsets.ISO_8859_1),StandardCharsets.UTF_8);
-                    films = filmService.findAllByString(searchStr);
+                    String searchStr = request.getParameter(SEARCH_PARAMETER);
+                    if (searchStr != null) {
+                        searchStr = new String(searchStr.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+                        films = filmService.findAllByString(searchStr);
+                    }
+                    else films = Collections.emptyList();
                     break;
                 default:
                     films = Collections.emptyList();
@@ -78,6 +85,7 @@ public class ShowMainPageCommand implements Command {
                 FilmGenre genre = FilmGenre.getGenreByName(genreName);
                 films = filmService.finAllByGenre(genre);
             }catch (UnknownEntityException e){
+                LOGGER.error(e.getMessage() + " Name: " + genreName);
                 films = Collections.emptyList();
             }
         }
@@ -96,6 +104,7 @@ public class ShowMainPageCommand implements Command {
                     Review review = reviewService.findBy(film, curUser);
                     filmMap.put(film.getId(), review);
                 } catch (UnknownEntityException e) {
+                    LOGGER.error(e.getMessage()+ " User: " + curUser.getName() + " Movie: " + film.getName());
                     filmMap.put(film.getId(), null);
                 }
             }

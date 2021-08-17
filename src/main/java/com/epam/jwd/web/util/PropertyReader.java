@@ -1,11 +1,15 @@
 package com.epam.jwd.web.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertyReader {
-
+    static final Logger LOGGER = LogManager.getRootLogger();
+    private static final String PROPERTY_LOADING_FAIL_MSG = "Loading settings failed.";
     private static PropertyReader instance = null;
 
     private static Properties properties = new Properties();
@@ -36,7 +40,7 @@ public class PropertyReader {
             properties = new Properties();
             properties.load(propertiesStream);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error( PROPERTY_LOADING_FAIL_MSG + e.getMessage());
         }
     }
 

@@ -28,7 +28,7 @@ public enum FilmGenre implements DbEntity {
                 return genre;
             }
         }
-        throw new UnknownEntityException("Impossible to find MovieGenre");
+        throw new UnknownEntityException("Impossible to find MovieGenre with such id.");
     }
 
     public static FilmGenre getGenreByName(String name){
@@ -36,7 +36,7 @@ public enum FilmGenre implements DbEntity {
             return valueOf(name);
         }catch (IllegalArgumentException e){
             //todo log
-            throw new UnknownEntityException("Impossible to find MovieGenre");
+            throw new UnknownEntityException("Impossible to find MovieGenre with such name.");
         }
     }
 
