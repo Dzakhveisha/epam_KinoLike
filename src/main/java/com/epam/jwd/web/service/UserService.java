@@ -24,6 +24,13 @@ public class UserService {
     private final BCrypt.Hasher hasher;
     private final BCrypt.Verifyer verifier;
 
+    private UserService(UserDao userDao){
+        this.userDao = userDao;
+        hasher = BCrypt.withDefaults();
+        verifier = BCrypt.verifyer();
+        statusDao = JdbcUserStatusDao.getInstance();
+    }
+
     private UserService() {
         userDao = JdbcUserDao.getInstance();
         hasher = BCrypt.withDefaults();
@@ -38,6 +45,20 @@ public class UserService {
                 localInstance = instance;
                 if (localInstance == null) {
                     localInstance = new UserService();
+                    instance = localInstance;
+                }
+            }
+        }
+        return localInstance;
+    }
+
+    public static UserService getInstance(UserDao userDao) {
+        UserService localInstance = instance;
+        if (localInstance == null) {
+            synchronized (UserService.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    localInstance = new UserService(userDao);
                     instance = localInstance;
                 }
             }

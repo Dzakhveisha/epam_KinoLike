@@ -73,13 +73,9 @@ public class FilmService {
         return movieDao.save(movie);
     }
 
-    public void deleteByName(String name){
-        try {
+    public void deleteByName(String name) throws UnknownEntityException{
             Movie movie = findByName(name);
             movieDao.delete(movie.getId());
-        }catch (UnknownEntityException E) {
-            //TODO LOG
-        }
     }
 
     public Movie update(Movie movie){

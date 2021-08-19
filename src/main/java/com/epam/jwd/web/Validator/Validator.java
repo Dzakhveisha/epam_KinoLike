@@ -30,7 +30,7 @@ public class Validator {
         if (user.getName().length() > 40 || user.getPasswordHash().length() > 40){
             throw new DataIsNotValidateException("Login or password is too long!");
         }
-        if (user.getAge() > 110 && user.getAge() < 6){
+        if (user.getAge() > 110 || user.getAge() < 6){
             throw new DataIsNotValidateException("Age is not real!");
         }
         if (!user.getEmail().contains("@")){
