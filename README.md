@@ -2,7 +2,6 @@
 ### EPAM Java Web Development
 ### final-project
 Author: Dasha Zakhvey
----
 ## Description:
 This platform is a film review application. Users can view movies by category, sort by rating or by release year. Authorized users can leave a review for the film. Additional functions for user and movie management are available to the administrator. The application calculates average ratings for films, and also downgrades or increases the status of the user, depending on his reviews.
 ## Functional:
