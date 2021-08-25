@@ -54,14 +54,9 @@ public class ConcurrentConnectionPool implements ConnectionPool {
         this.user = propertyReader.getProperty(DBParameter.DB_USER);
         this.password = propertyReader.getProperty(DBParameter.DB_PASSWORD);
         this.driverName = propertyReader.getProperty(DBParameter.DB_DRIVER_NAME);
-        try {
-            this.init();
-        } catch (CouldNotInitializeConnectionPoolException e) {
-            LOGGER.error(e.getMessage());
-        }
     }
 
-    public void init() throws CouldNotInitializeConnectionPoolException {
+     public void init() throws CouldNotInitializeConnectionPoolException {
         if (initialized.compareAndSet(false, true)) {
             registerDrivers();
             try {
