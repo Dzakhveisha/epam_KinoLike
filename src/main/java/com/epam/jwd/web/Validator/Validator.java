@@ -5,10 +5,16 @@ import com.epam.jwd.web.model.Movie;
 import com.epam.jwd.web.model.Review;
 import com.epam.jwd.web.model.User;
 
+/**
+ * verifies data about entities
+ */
 public class Validator {
 
     private static Validator instance;
 
+    /**
+     * @return instance of Validator
+     */
     public static Validator getInstance() {
         Validator localInstance = instance;
         if (localInstance == null) {
@@ -26,6 +32,12 @@ public class Validator {
     private Validator() {
     }
 
+    /**
+     * Validate user
+     *
+     * @param user user to be validate
+     * @throws DataIsNotValidateException
+     */
     public void validateUser(User user) throws DataIsNotValidateException {
         if (user.getName().length() > 40 || user.getPasswordHash().length() > 40){
             throw new DataIsNotValidateException("Login or password is too long!");
@@ -38,6 +50,12 @@ public class Validator {
         }
     }
 
+    /**
+     * Validate movie
+     *
+     * @param movie movie to be validate
+     * @throws DataIsNotValidateException
+     */
     public void validateFilm(Movie movie) throws DataIsNotValidateException{
         if(movie.getYear() < 1895 || movie.getYear() > 2022) {
             throw new DataIsNotValidateException("Year is not Real!");
@@ -53,6 +71,12 @@ public class Validator {
         }
     }
 
+    /**
+     * Validate review
+     *
+     * @param review review to be validate
+     * @throws DataIsNotValidateException
+     */
     public void validateReview(Review review) throws DataIsNotValidateException{
         if (review.getValue() > 10 || review.getValue() < 0){
             throw new DataIsNotValidateException("Rating is not Real! It must be between 0 and 10.");

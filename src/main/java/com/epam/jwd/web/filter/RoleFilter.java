@@ -15,6 +15,9 @@ import java.util.*;
 
 import static com.epam.jwd.web.model.UserRole.UNAUTHORIZED;
 
+/**
+ *  Make command access checking
+ */
 @WebFilter(urlPatterns = "/controller")
 public class RoleFilter implements Filter {
 

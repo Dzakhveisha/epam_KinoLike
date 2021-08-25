@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+/**
+ *  read properties from file
+ */
 public class PropertyReader {
     static final Logger LOGGER = LogManager.getRootLogger();
     private static final String PROPERTY_LOADING_FAIL_MSG = "Loading settings failed.";
@@ -18,6 +21,9 @@ public class PropertyReader {
     private PropertyReader() {
     }
 
+    /**
+     * @return instance of PropertyReader
+     */
     public static PropertyReader getInstance() {
         if (instance == null) {
             synchronized (PropertyReader.class) {
@@ -29,11 +35,19 @@ public class PropertyReader {
         return instance;
     }
 
+    /**
+     * return property by it's name
+     * @param propertyName name of property
+     * @return value of property
+     */
     public String getProperty(String propertyName) {
         LoadAllProperties();
         return properties.getProperty(propertyName);
     }
 
+    /**
+     * load all properties from file
+     */
     private void LoadAllProperties() {
         try (InputStream propertiesStream = getClass().getClassLoader()
                 .getResourceAsStream(PROPERTY_FILE_NAME)) {

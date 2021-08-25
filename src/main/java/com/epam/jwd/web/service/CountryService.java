@@ -31,6 +31,7 @@ public class CountryService {
         return localInstance;
     }
 
+
     public List<Country> findAll() {
         return countryDao.findAll();
     }

@@ -1,6 +1,9 @@
 package com.epam.jwd.web.exception;
 
-public class CouldNotInitializeConnectionPoolException extends ConnectionPoolException{
+/**
+ * Throws when it is impossible to initialize connection pool
+ */
+public class CouldNotInitializeConnectionPoolException extends Exception{
 
     public CouldNotInitializeConnectionPoolException(String message, Throwable cause){
         super(message, cause);

@@ -7,6 +7,9 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * Set attribute about content language if it need
+ */
 public class LanguageFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {}

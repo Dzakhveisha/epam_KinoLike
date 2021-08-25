@@ -36,6 +36,10 @@
         <url-pattern>/images/*</url-pattern>
     </servlet-mapping>
 
+    <listener>
+        <listener-class>com.epam.jwd.web.pool.ConnectionPoolManager</listener-class>
+    </listener>
+
     <filter>
         <filter-name>Charset Filter</filter-name>
         <filter-class>com.epam.jwd.web.filter.CharsetFilter</filter-class>
