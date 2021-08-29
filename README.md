@@ -25,4 +25,4 @@ This platform is a film review application. Users can view movies by category, s
   + all functional for registered user
 ---
 ## Database Diagram:
-![db diagram](D:\java\epam\jwd.png "Database Diagram")
+![db diagram](jwd_db_diagram.png "Database Diagram")
